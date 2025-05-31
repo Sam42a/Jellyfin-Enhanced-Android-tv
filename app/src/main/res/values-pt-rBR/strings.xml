@@ -252,6 +252,7 @@
     <string name="seek_error">Incapaz de buscar</string>
     <string name="msg_live_tv_prev">Carregar às %1$d horas prévias?</string>
     <string name="msg_live_tv_next">Carregar próximas %1$d horas?</string>
+    <string name="msg_live_tv_next">Carregar próximas %1$d horas?\"</string>
     <string name="lbl_load_guide_data">Carregar programação dos canais</string>
     <string name="episode_missing_message_2">Esse episódio não está disponível na sua biblioteca. A reprodução será interrompida.</string>
     <string name="episode_missing_message">Esse episódio não está disponível na sua biblioteca. Gostaria de pular esse e continuar para o próximo\?</string>
@@ -521,6 +522,12 @@
     </plurals>
     <plurals name="tv_series">
         <item quantity="one">%1$s séries de TV</item>
+        <item quantity="one">%1$s filme</item>
+        <item quantity="many">%1$s filmes</item>
+        <item quantity="other">%1$s filmes</item>
+    </plurals>
+    <plurals name="tv_series">
+        <item quantity="one">%1$s série de TV</item>
         <item quantity="many">%1$s séries de TV</item>
         <item quantity="other">%1$s séries de TV</item>
     </plurals>
@@ -528,6 +535,9 @@
         <item quantity="one">Músicas de %1$s</item>
         <item quantity="many">Músicas de %1$s</item>
         <item quantity="other">Músicas de %1$s</item>
+        <item quantity="one">%1$s música</item>
+        <item quantity="many">%1$s músicas</item>
+        <item quantity="other">%1$s músicas</item>
     </plurals>
     <plurals name="albums">
         <item quantity="one">Álbum %1$s</item>

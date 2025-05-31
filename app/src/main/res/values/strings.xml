@@ -7,6 +7,8 @@
     <string name="profile_picture">Profile picture</string>
     <string name="app_name_release" translatable="false" tools:ignore="UnusedResources">DUNE</string>
     <string name="app_name_debug" translatable="false" tools:ignore="UnusedResources">DUNE Debug</string>
+    <string name="app_name_release" translatable="false" tools:ignore="UnusedResources">Jellyfin</string>
+    <string name="app_name_debug" translatable="false" tools:ignore="UnusedResources">Jellyfin Debug</string>
     <string name="video_error_unknown_error">Failed to load video</string>
     <string name="loading">Loading…</string>
     <string name="btn_cancel">Cancel</string>
@@ -20,6 +22,11 @@
     <string name="chapters">Chapters</string>
     <string name="state_disabled">Disabled</string>
     <string name="lbl_settings">Settings</string>
+    <string name="settings_title">Preferences</string>
+    <string name="pref_authentication_cat">Authentication</string>
+    <string name="chapters">Chapters</string>
+    <string name="state_disabled">Disabled</string>
+    <string name="lbl_settings">Preferences</string>
     <string name="lbl_home">Home</string>
     <string name="lbl_continue_watching">Continue watching</string>
     <string name="continue_listening">Continue listening</string>
@@ -44,6 +51,10 @@
     <string name="msg_not_implemented">" not implemented"</string>
     <string name="lbl_latest">Recently added</string>
     <string name="lbl_latest_in">Recently added in %s</string>
+    <string name="lbl_search">Search</string>
+    <string name="msg_not_implemented">" not implemented"</string>
+    <string name="lbl_latest">Recently added</string>
+    <string name="lbl_latest_in">Recently added in %1$s</string>
     <string name="lbl_by_name">By name</string>
     <string name="lbl_favorites">Favorites</string>
     <string name="lbl_coming_up">Coming up</string>
@@ -224,6 +235,7 @@
     <string name="lbl_play_next_up">Play next up</string>
     <string name="lbl_open">Open</string>
     <string name="lbl_show_backdrop">Show backdrops</string>
+    <string name="pref_show_backdrop_description">Change background image to selected items</string>
     <string name="lbl_show_premieres">Show season premieres</string>
     <string name="desc_premieres">Show a row of new episode pilots for any series you watch</string>
     <string name="lbl_in_x_days">In %d days</string>
@@ -283,6 +295,9 @@
     <string name="pref_theme_dark">Dark</string>
     <string name="pref_theme_emerald">Emerald</string>
     <string name="pref_theme_muted_purple">Muted Purple</string>
+    <string name="lbl_my_media">My media</string>
+    <string name="pref_theme_dark">Dark (Default)</string>
+    <string name="pref_theme_emerald">Classic emerald</string>
     <string name="pref_about_title">About</string>
     <string name="pref_external_player">Use external player</string>
     <string name="pref_next_up_timeout_summary">How long to wait before playing the next item</string>
@@ -302,6 +317,7 @@
     <!-- Subtitle Weight Preference -->
     <string name="pref_subtitle_weight">Subtitle Weight</string>
     <string name="pref_subtitle_weight_description">Choose the font weight for subtitles</string>
+    <string name="pref_subtitle_track_button">Subtitle track button</string>
     <string name="pref_button_remapping_description">Press any button on the TV remote to assign it</string>
     <string name="lbl_Reset">Reset</string>
     <string name="bitrate_mbit">%1$,.0f Mbit/s</string>
@@ -395,12 +411,15 @@
     <string name="lbl_hide_watched_checkmark">When there are episodes remaining</string>
     <string name="lbl_use_series_thumbnails">Prefer series thumbnails</string>
     <string name="lbl_use_series_thumbnails_description">Use series thumbnails instead of individual episode thumbnails</string>
+    <string name="lbl_use_series_thumbnails_description">Use series thumbnails when displaying episodes</string>
     <string name="auto_sign_in">Automatic sign in</string>
     <string name="user_picker_disable_title">Disable</string>
     <string name="user_picker_disable_summary">Always show the sign in screen</string>
     <string name="user_picker_last_user_title">Most recently used</string>
     <string name="user_picker_last_user_summary">Use the last active account</string>
     <string name="lbl_switch_user">Users</string>
+    <string name="lbl_switch_user">Switch account</string>
+    <string name="pref_theme_muted_purple">Muted purple</string>
     <string name="no_network_permissions">Jellyfin requires network permissions to function</string>
     <string name="press_to_close">Press to close</string>
     <string name="saved_servers">Saved servers</string>
@@ -593,6 +612,7 @@
     <string name="pref_report_device_profile_failure">Failed to submit document. Your Jellyfin server may prohibit client logs.</string>
     <string name="fast_forward">Fast forward</string>
     <string name="rewind">Rewind</string>
+    <string name="preference_enable_libass">Enable Advanced SubStation Alpha subtitle client rendering</string>
     <plurals name="seconds">
         <item quantity="one">%1$s second</item>
         <item quantity="other">%1$s seconds</item>

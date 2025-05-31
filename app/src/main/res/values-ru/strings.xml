@@ -301,6 +301,7 @@
     <string name="image_size_small">Мелкий</string>
     <string name="image_type_banner">Баннер</string>
     <string name="image_type_thumbnail">Бегунок</string>
+    <string name="image_type_thumbnail">Миниатюра</string>
     <string name="lbl_use_series_thumbnails_description">Использовать бегунки сериалов при отображении эпизодов</string>
     <string name="lbl_use_series_thumbnails">Предпочитать бегунки сериалов</string>
     <string name="lbl_hide_unwatched_count">Когда объект просматривается</string>
@@ -595,4 +596,5 @@
     <string name="indicator_subtitles_hearing_impaired">Слабослышащие</string>
     <string name="fast_forward">Перемотать вперед</string>
     <string name="rewind">Перемотать назад</string>
+    <string name="preference_enable_libass">Включить отрисовку субтитров типа Advanced SubStation Alpha на клиенте</string>
 </resources>

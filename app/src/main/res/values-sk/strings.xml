@@ -253,6 +253,8 @@
     <string name="seek_error">Vyhľadávanie vo video nie je možné</string>
     <string name="msg_live_tv_prev">Načítať predchádzajúcich %1$d hodín?\"</string>
     <string name="msg_live_tv_next">Načítať ďalších %1$d hodín?\"</string>
+    <string name="msg_live_tv_prev">Načítať predchádzajúcich %1$d hodín?</string>
+    <string name="msg_live_tv_next">Načítať ďalších %1$d hodín?</string>
     <string name="lbl_load_guide_data">Načítať dáta programového sprievodcu</string>
     <string name="episode_missing_message_2">Táto epizóda chýba vo vašej knižnici. Prehrávanie bude zastavené.</string>
     <string name="episode_missing_message">Táto epizóda chýba vo vašej knižnici. Chcete ju preskočiť a pokračovať nasledujúcou epizódou\?</string>
@@ -585,4 +587,5 @@
     <string name="indicator_subtitles_hearing_impaired">SDH</string>
     <string name="fast_forward">Pretočiť dopredu</string>
     <string name="rewind">Pretočiť dozadu</string>
+    <string name="preference_enable_libass">Povoliť pokročilé klientské vykresľovanie SubStation Alpha titulkov</string>
 </resources>
