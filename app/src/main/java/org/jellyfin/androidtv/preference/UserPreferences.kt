@@ -39,7 +39,7 @@ class UserPreferences(context: Context) : SharedPreferenceStore(
         /**
          * Show white borders around cards
          */
-        var showWhiteBorders = booleanPreference("show_white_borders", false)
+        var showWhiteBorders = booleanPreference("show_white_borders", true)
         @JvmStatic
         fun getShowWhiteBordersKey(): String = "show_white_borders"
         /**

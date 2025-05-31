@@ -21,5 +21,5 @@ fun DreamContentLogo() = Box(
 		.fillMaxSize()
 		.background(Color.Transparent),
 ) {
-	// Logo removed
+	// Logo removed as per user request
 }

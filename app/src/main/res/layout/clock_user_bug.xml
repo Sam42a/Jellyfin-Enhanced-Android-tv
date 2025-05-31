@@ -27,7 +27,7 @@
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:contentDescription="@string/lbl_live_tv"
-        android:src="@drawable/ic_tv"
+        android:src="@drawable/ic_select_quality"
         app:tint="@color/button_text" />
 
     <Space
@@ -38,7 +38,7 @@
         android:id="@+id/clock_user_image"
         android:layout_width="41dp"
         android:layout_height="41dp"
-        android:padding="4dp"
+        android:padding="7dp"
         app:circleCrop="true"
         tools:src="@drawable/ic_user" />
 
