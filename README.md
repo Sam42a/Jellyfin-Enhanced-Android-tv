@@ -147,7 +147,7 @@ This project uses the same translation system as the original Jellyfin Android T
    ./gradlew installEnhancedRelease
    ```
 
-**Note:** The enhanced version uses package ID `org.jellyfyn.androidtv.enhanced` which allows it to be installed alongside the original Jellyfin app.
+**Note:** The enhanced version uses package ID `org.jellyfin.androidtv.enhanced` which allows it to be installed alongside the original Jellyfin app.
 
 ### Build System Requirements
 
