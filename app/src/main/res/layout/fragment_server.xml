@@ -25,108 +25,16 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:visibility="visible" />
 
-    <androidx.leanback.widget.HorizontalGridView
-        android:id="@+id/users"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="48dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="48dp"
-        android:layout_marginBottom="32dp"
-        android:clipChildren="false"
-        android:clipToPadding="false"
-        android:scrollbars="none"
-        android:paddingTop="16dp"
-        android:paddingBottom="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/actions_container"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title"
-        app:rowHeight="wrap_content"
-        tools:itemCount="4"
-        tools:listitem="@layout/view_circular_user_profile" />
-
-    <TextView
-        android:id="@+id/no_users_warning"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:gravity="center"
-        android:rotationX="-2"
-        android:text="@string/no_user_warning"
-        android:textColorLink="#FAFAFA"
-        app:layout_constraintBottom_toTopOf="@+id/actions_container"
-        app:layout_constraintEnd_toEndOf="@id/actions_container"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="@id/actions_container"
-        app:layout_constraintTop_toTopOf="@+id/users"
-        app:layout_constraintVertical_bias="1.0"
-        tools:visibility="invisible" />
-
-    <LinearLayout
-        android:id="@+id/actions_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="48dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="48dp"
-        android:gravity="center"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/users">
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/add_user_button"
-            style="@style/Button.Default"
-            android:layout_width="wrap_content"
-            android:layout_height="51dp"
-            android:layout_margin="8dp"
-            android:drawableStart="@drawable/ic_user_add"
-            android:text="@string/add_user"
-            tools:layout_editor_absoluteX="56dp"
-            tools:layout_editor_absoluteY="357dp" />
-
-        <org.jellyfin.androidtv.ui.ServerButtonView
-            android:id="@+id/server_button"
-            android:layout_width="751dp"
-            android:layout_height="match_parent"
-            android:layout_margin="8dp"
-            android:layout_weight="1"
-            android:padding="0dp"
-            tools:layout_editor_absoluteX="215dp"
-            tools:layout_editor_absoluteY="357dp">
-
-        </org.jellyfin.androidtv.ui.ServerButtonView>
-
-    </LinearLayout>
-
-    <org.jellyfin.androidtv.ui.ExpandableTextView
-        android:id="@+id/login_disclaimer"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="48dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="48dp"
-        android:ellipsize="end"
-        android:gravity="center"
-        android:maxLines="3"
-        android:padding="8dp"
-        app:layout_constraintEnd_toEndOf="@id/actions_container"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@id/actions_container"
-        app:layout_constraintTop_toBottomOf="@+id/actions_container"
-        tools:text="This is the login disclaimer." />
-
     <TextView
         android:id="@+id/title"
         style="@style/Widget.Jellyfin.Row.Header"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="48dp"
-        android:layout_marginTop="88dp"
+        android:layout_marginTop="60dp"
         android:layout_marginEnd="48dp"
         android:backgroundTint="#787272"
+        android:fontFamily="sans-serif-condensed"
         android:gravity="center"
         android:lineSpacingExtra="8sp"
         android:text="@string/who_is_watching"
@@ -140,5 +48,101 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/notification"
         app:layout_goneMarginTop="0dp" />
+
+    <TextView
+        android:id="@+id/no_users_warning"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:rotationX="-2"
+        android:text="@string/no_user_warning"
+        android:textColorLink="#FAFAFA"
+        app:layout_constraintBottom_toTopOf="@+id/actions_container"
+        app:layout_constraintEnd_toEndOf="@id/actions_container"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@id/actions_container"
+        app:layout_constraintTop_toTopOf="@+id/users"
+        app:layout_constraintVertical_bias="1.0"
+        tools:visibility="invisible" />
+
+    <LinearLayout
+        android:id="@+id/actions_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="48dp"
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/users">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/add_user_button"
+            style="@style/Button.Default"
+            android:layout_width="wrap_content"
+            android:layout_height="51dp"
+            android:layout_margin="8dp"
+            android:baselineAligned="false"
+            android:drawableStart="@drawable/ic_user_add"
+            android:text="@string/add_user"
+            tools:layout_editor_absoluteX="56dp"
+            tools:layout_editor_absoluteY="357dp" />
+
+        <org.jellyfin.androidtv.ui.ServerButtonView
+            android:id="@+id/server_button"
+            android:layout_width="751dp"
+            android:layout_height="match_parent"
+            android:layout_margin="8dp"
+            android:padding="0dp"
+            android:foreground="@drawable/button_default_ripple"
+            tools:ignore="TextSizeCheck"
+            tools:layout_editor_absoluteX="215dp"
+            tools:layout_editor_absoluteY="357dp">
+
+        </org.jellyfin.androidtv.ui.ServerButtonView>
+
+    </LinearLayout>
+
+    <org.jellyfin.androidtv.ui.ExpandableTextView
+        android:id="@+id/login_disclaimer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="48dp"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:maxLines="3"
+        android:padding="8dp"
+        app:layout_constraintEnd_toEndOf="@id/actions_container"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@id/actions_container"
+        app:layout_constraintTop_toBottomOf="@+id/actions_container"
+        tools:text="This is the login disclaimer." />
+
+    <androidx.leanback.widget.HorizontalGridView
+        android:id="@+id/users"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="260dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginEnd="250dp"
+        android:layout_marginBottom="32dp"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:scrollbars="none"
+        app:layout_constraintBottom_toTopOf="@+id/actions_container"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title"
+        app:layout_constraintVertical_bias="1.0"
+        app:rowHeight="wrap_content"
+        tools:itemCount="4"
+        tools:listitem="@layout/view_circular_user_profile" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
