@@ -39,7 +39,7 @@ class UserPreferences(context: Context) : SharedPreferenceStore(
         /**
          * Show white borders around cards
          */
-        var showWhiteBorders = booleanPreference("show_white_borders", false)
+        var showWhiteBorders = booleanPreference("show_white_borders", true)
         @JvmStatic
         fun getShowWhiteBordersKey(): String = "show_white_borders"
         /**
@@ -237,7 +237,7 @@ class UserPreferences(context: Context) : SharedPreferenceStore(
 		/**
 		 * Age rating used to filter items in the screensaver. Use -1 to disable (omits parameter from requests).
 		 */
-		var screensaverAgeRatingMax = intPreference("screensaver_agerating_max", 13)
+		var screensaverAgeRatingMax = intPreference("screensaver_agerating_max", -1)
 
 		/**
 		 * Whether items shown in the screensaver are required to have an age rating set.
