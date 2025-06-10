@@ -24,7 +24,7 @@ android {
 		applicationId = namespace
 		versionName = project.getVersionName()
 		versionCode = getVersionCode(versionName!!)
-		setProperty("archivesBaseName", "jellyfin-androidtv-Enhanced-v$versionName")
+		setProperty("archivesBaseName", "Dune.androidtv-V0.4")
 	}
 
 	buildFeatures {
@@ -86,10 +86,10 @@ android {
 		
 		create("enhanced") {
 			dimension = "variant"
-			applicationId = "org.jellyfyn.androidtv.enhanced"
+			applicationId = "Dune.enhanced.tv"
 			
 			// Set specific version name for enhanced variant
-			versionName = "0.18.8"
+			versionName = "0.4"
 			
 			// Set app name for the enhanced version
 			resValue("string", "app_name_release", "DUNE")
@@ -100,7 +100,7 @@ android {
 			resValue("string", "app_search_suggest_intent_data", "content://${applicationId}.content/intent")
 			
 			// Set custom APK filename
-			setProperty("archivesBaseName", "jellyfin-androidtv-Enhanced-v0.18.8")
+			setProperty("archivesBaseName", "Dune.androidtv-0.4")
 		}
 	}
 
@@ -129,14 +129,14 @@ val versionTxt by tasks.registering {
 // Simple task to build the enhanced version
 tasks.register("buildEnhanced") {
 	group = "build"
-	description = "Builds the enhanced version with package ID: org.jellyfyn.androidtv.enhanced"
+	description = "Builds the enhanced version with package ID: Dune.enhanced.tv"
 	dependsOn("assembleEnhancedRelease")
 	doLast {
 		println("\nBuilding Enhanced version with:")
-		println("Package ID: org.jellyfyn.androidtv.enhanced")
-		println("Version: 0.18.8")
+		println("Package ID: Dune.enhanced.tv")
+		println("Version: 0.4")
 		println("App Name: Jellyfine")
-		println("Filename: jellyfin-androidtv-Enhanced-v0.18.8.apk")
+		println("Filename: Dune.androidtv-0.4.apk")
 		println("The APK will be available in: app/build/outputs/apk/enhanced/release/")
 	}
 }
@@ -201,6 +201,7 @@ dependencies {
 	implementation(libs.bundles.coil)
 	implementation("com.github.bumptech.glide:glide:4.16.0")
 	implementation("androidx.viewpager2:viewpager2:1.0.0")
+	implementation("pl.droidsonroids.gif:android-gif-drawable:1.2.28")
 
 	// Crash Reporting
 	implementation(libs.bundles.acra)

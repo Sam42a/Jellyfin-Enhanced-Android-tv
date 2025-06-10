@@ -12,8 +12,8 @@ fun OptionsScreen.aboutCategory() = category {
 
 	link {
 		// Hardcoded strings for troubleshooting purposes
-		title = "Dune app Version"
-		content = "jellyfin-androidtv-Enhanced ${BuildConfig.VERSION_NAME} ${BuildConfig.BUILD_TYPE}"
+		title = "Dune app version"
+		content = "0.4"
 		icon = R.drawable.app_logo
 	}
 

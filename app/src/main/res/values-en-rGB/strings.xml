@@ -319,7 +319,7 @@
     <string name="license_artifact">Artifact</string>
     <string name="license_version">Version</string>
     <string name="license_description">Description</string>
-    <string name="licenses_link_description">View the licenses of the libraries used by the Jellyfin app</string>
+    <string name="licenses_link_description"></string>
     <string name="licenses_link">Licenses</string>
     <string name="select_version">Version</string>
     <string name="advanced_settings">Advanced</string>
