@@ -1,21 +1,19 @@
 package org.jellyfin.androidtv.ui.home
 
-import android.annotation.SuppressLint
 import android.content.Context
-import android.widget.ImageView
-import androidx.leanback.widget.BaseCardView
 import androidx.leanback.widget.Presenter
+import androidx.leanback.widget.Row
 import org.jellyfin.androidtv.R
-import org.jellyfin.androidtv.auth.repository.UserRepository
 import org.jellyfin.androidtv.constant.ChangeTriggerType
-import org.jellyfin.androidtv.constant.ImageType as JellyfinImageType
+import org.jellyfin.androidtv.constant.ImageType
 import org.jellyfin.androidtv.data.repository.ItemRepository
+import org.jellyfin.androidtv.auth.repository.UserRepository
 import org.jellyfin.androidtv.ui.browsing.BrowseRowDef
+import androidx.leanback.widget.BaseCardView
 import org.jellyfin.androidtv.ui.card.LegacyImageCardView
+import org.jellyfin.androidtv.ui.presentation.CardPresenter
 import org.jellyfin.androidtv.ui.presentation.MutableObjectAdapter
-import org.jellyfin.androidtv.util.ImageHelper
 import org.jellyfin.sdk.model.api.BaseItemKind
-import org.jellyfin.sdk.model.api.ImageType
 import org.jellyfin.sdk.model.api.ItemSortBy
 import org.jellyfin.sdk.model.api.MediaType
 import org.jellyfin.sdk.model.api.request.GetItemsRequest
@@ -23,149 +21,88 @@ import org.jellyfin.sdk.model.api.request.GetNextUpRequest
 import org.jellyfin.sdk.model.api.request.GetRecommendedProgramsRequest
 import org.jellyfin.sdk.model.api.request.GetRecordingsRequest
 import org.jellyfin.sdk.model.api.request.GetResumeItemsRequest
-import timber.log.Timber
+import org.jellyfin.sdk.model.api.SortOrder
 
 class HomeFragmentHelper(
     private val context: Context,
     private val userRepository: UserRepository
 ) {
-    // ... (previous methods remain the same)
-
-    fun loadSuggestedMoviesRow(): HomeFragmentRow {
-        // Get the current user ID
-        val currentUserId = userRepository.currentUser.value?.id
-
-        // Create a query that uses Jellyfin's recommendation capabilities
-        if (currentUserId != null) {
-            // Create a query for recently played movies to get genres the user likes
-            val recentlyPlayedQuery = org.jellyfin.sdk.model.api.request.GetItemsRequest(
-                userId = currentUserId,
-                includeItemTypes = setOf(BaseItemKind.MOVIE),
-                sortBy = setOf(ItemSortBy.DATE_PLAYED),
-                sortOrder = setOf(org.jellyfin.sdk.model.api.SortOrder.DESCENDING),
-                filters = setOf(org.jellyfin.sdk.model.api.ItemFilter.IS_PLAYED),
-                limit = 5,  // Just get a few recently watched items to extract genres
-                fields = ItemRepository.itemFields,
-                recursive = true
-            )
-
-            // Create a generic recommended items query
-            // This will show unplayed movies sorted by which match the user's taste better
-            val suggestedQuery = org.jellyfin.sdk.model.api.request.GetItemsRequest(
-                userId = currentUserId,
-                includeItemTypes = setOf(BaseItemKind.MOVIE),
-                // Sort by rating to get better movies first
-                sortBy = setOf(ItemSortBy.COMMUNITY_RATING),
-                sortOrder = setOf(org.jellyfin.sdk.model.api.SortOrder.DESCENDING),
-                // Only show unwatched content
-                isPlayed = false,
-                recursive = true,
-                limit = 50,
-                fields = ItemRepository.itemFields,
-                excludeItemTypes = setOf(BaseItemKind.EPISODE),
-                // Using a null filter here will get Jellyfin to give recommended items
-                filters = null
-            )
-
-            // Create a row with the suggested movies
-            val row = HomeFragmentBrowseRowDefRow(BrowseRowDef("Suggested Movies", suggestedQuery, 50, false, true))
-            return createNoInfoRow(row)
-        } else {
-            // Fallback query if no user is available
-            val fallbackQuery = org.jellyfin.sdk.model.api.request.GetItemsRequest(
-                includeItemTypes = setOf(BaseItemKind.MOVIE),
-                sortBy = setOf(ItemSortBy.RANDOM),
-                limit = 50,
-                fields = ItemRepository.itemFields,
-                recursive = true,
-                excludeItemTypes = setOf(BaseItemKind.EPISODE)
-            )
-
-            val row = HomeFragmentBrowseRowDefRow(BrowseRowDef("Suggested Movies", fallbackQuery, 50, false, true))
-            return createNoInfoRow(row)
-        }
+    companion object {
+        private const val ITEM_LIMIT = 40
+        private const val ITEM_LIMIT_RESUME = 50
+        private const val ITEM_LIMIT_RECORDINGS = 40
+        private const val ITEM_LIMIT_NEXT_UP = 50
+        private const val ITEM_LIMIT_ON_NOW = 20
     }
 
-    fun loadSuggestedTvShowsRow(): HomeFragmentRow {
-        Timber.d("Loading Suggested TV Shows row")
-        // Get the current user ID
-        val currentUserId = userRepository.currentUser.value?.id
 
-        // Create a query that uses Jellyfin's recommendation capabilities
-        if (currentUserId != null) {
-            // Create a query for recently played TV shows to get genres the user likes
-            val recentlyPlayedQuery = org.jellyfin.sdk.model.api.request.GetItemsRequest(
-                userId = currentUserId,
-                includeItemTypes = setOf(BaseItemKind.SERIES),
-                sortBy = setOf(ItemSortBy.DATE_PLAYED),
-                sortOrder = setOf(org.jellyfin.sdk.model.api.SortOrder.DESCENDING),
-                filters = setOf(org.jellyfin.sdk.model.api.ItemFilter.IS_PLAYED),
-                limit = 5,  // Just get a few recently watched items to extract genres
-                fields = ItemRepository.itemFields,
-                recursive = true
-            )
 
-            // Create a generic recommended items query
-            // This will show unplayed TV shows sorted by which match the user's taste better
-            val suggestedQuery = org.jellyfin.sdk.model.api.request.GetItemsRequest(
-                userId = currentUserId,
-                includeItemTypes = setOf(BaseItemKind.SERIES),
-                // Sort by rating to get better shows first
-                sortBy = setOf(ItemSortBy.COMMUNITY_RATING),
-                sortOrder = setOf(org.jellyfin.sdk.model.api.SortOrder.DESCENDING),
-                // Only show unwatched content
-                isPlayed = false,
-                recursive = true,
-                limit = 50,
-                fields = ItemRepository.itemFields,
-                excludeItemTypes = setOf(BaseItemKind.EPISODE),
-                // Using a null filter here will get Jellyfin to give recommended items
-                filters = null
-            )
+	fun loadMyCollectionsRow(): HomeFragmentRow {
+		val query = GetItemsRequest(
+			fields = ItemRepository.itemFields,
+			includeItemTypes = setOf(BaseItemKind.BOX_SET),
+			recursive = true,
+			imageTypeLimit = 1,
+			limit = 20,
+			sortBy = setOf(ItemSortBy.DATE_CREATED),
+			// Pass SortOrder.DESCENDING within a list or set
+			sortOrder = listOf(SortOrder.DESCENDING), // Or use setOf(SortOrder.DESCENDING)
+			enableImageTypes = setOf(
+				org.jellyfin.sdk.model.api.ImageType.THUMB,
+				org.jellyfin.sdk.model.api.ImageType.BACKDROP,
+				org.jellyfin.sdk.model.api.ImageType.PRIMARY
+			)
+		)
 
-            // Create a row with the suggested TV shows
-            val row = HomeFragmentBrowseRowDefRow(BrowseRowDef(context.getString(R.string.lbl_suggested_tv_shows), suggestedQuery, 50, false, true))
-            Timber.d("Suggested TV Shows row created: $row")
-            return createNoInfoRow(row)
-        } else {
-            // Fallback query if no user is available
-            val fallbackQuery = org.jellyfin.sdk.model.api.request.GetItemsRequest(
-                includeItemTypes = setOf(BaseItemKind.SERIES),
-                sortBy = setOf(ItemSortBy.RANDOM),
-                limit = 50,
-                fields = ItemRepository.itemFields,
-                recursive = true,
-                excludeItemTypes = setOf(BaseItemKind.EPISODE)
-            )
+		// ... rest of your function remains the same ...
+		// Create a custom row that matches the Next Up row style but uses backdrop images
+		return object : HomeFragmentRow {
+			override fun addToRowsAdapter(
+				context: Context,
+				cardPresenter: CardPresenter,
+				rowsAdapter: MutableObjectAdapter<Row>
+			) {
+				// Create a custom card presenter with THUMB type for collections
+				val collectionsCardPresenter = object : CardPresenter(
+					false,  // showInfo - set to false to hide rating
+					ImageType.THUMB,  // Use THUMB for collections to show thumbnails
+					150  // Match Next Up row height
+				) {
+					override fun onBindViewHolder(viewHolder: Presenter.ViewHolder, item: Any) {
+						super.onBindViewHolder(viewHolder, item)
+						// Set fixed dimensions for all cards in the row
+						(viewHolder.view as? org.jellyfin.androidtv.ui.card.LegacyImageCardView)?.apply {
+							setCardType(BaseCardView.CARD_TYPE_MAIN_ONLY)  // Changed from CARD_TYPE_INFO_UNDER to hide all text
+							// Match the dimensions of Next Up cards (width: 260dp, height: 150dp)
+							setMainImageDimensions(290, 160)
+							// Clear any content text that might be set
+							contentText = ""
+						}
+					}
+				}.apply {
+					setHomeScreen(true)
+					setUniformAspect(true)
+				}
 
-            val row = HomeFragmentBrowseRowDefRow(BrowseRowDef(context.getString(R.string.lbl_suggested_tv_shows), fallbackQuery, 50, false, true))
-            Timber.d("Suggested TV Shows fallback row created: $row")
-            return createNoInfoRow(row)
-        }
-    }
-
-    fun loadMyCollectionsRow(): HomeFragmentRow {
-        val query = org.jellyfin.sdk.model.api.request.GetItemsRequest(
-            fields = ItemRepository.itemFields,
-            includeItemTypes = setOf(BaseItemKind.BOX_SET),
-            recursive = true,
-            imageTypeLimit = 1,
-            limit = 20,
-            sortBy = setOf(ItemSortBy.SORT_NAME),
-        )
-
-        // Create a custom row with no-info card style
-        val row = HomeFragmentBrowseRowDefRow(
-            org.jellyfin.androidtv.ui.browsing.BrowseRowDef(context.getString(R.string.lbl_my_collections), query, 20, false, true)
-        )
-
-        return createNoInfoRow(row)
-    }
+				// Add the row with our custom card presenter
+				HomeFragmentBrowseRowDefRow(
+					org.jellyfin.androidtv.ui.browsing.BrowseRowDef(
+						context.getString(R.string.lbl_my_collections),
+						query,
+						20,
+						false,
+						true
+					)
+				).addToRowsAdapter(context, collectionsCardPresenter, rowsAdapter)
+			}
+		}
+	}
 
     fun loadFavoritesRow(): HomeFragmentRow {
         val query = GetItemsRequest(
             isFavorite = true,
             sortBy = setOf(ItemSortBy.DATE_CREATED),
+			sortOrder = listOf(SortOrder.DESCENDING),
             limit = 20,
             fields = ItemRepository.itemFields,
             recursive = true,
@@ -189,21 +126,15 @@ class HomeFragmentHelper(
     fun loadAnimeRow(): HomeFragmentRow = genreRow("Anime")
     fun loadActionRow(): HomeFragmentRow = genreRow("Action")
     fun loadActionAdventureRow(): HomeFragmentRow = genreRow("Action & Adventure")
-    fun loadDocumentaryRow(): HomeFragmentRow = genreRow("Documentary")
-    fun loadRealityRow(): HomeFragmentRow = genreRow("Reality")
-    fun loadFamilyRow(): HomeFragmentRow = genreRow("Family")
-    fun loadHorrorRow(): HomeFragmentRow = genreRow("Horror")
-    fun loadFantasyRow(): HomeFragmentRow = genreRow("Fantasy")
-    fun loadHistoryRow(): HomeFragmentRow = genreRow("History")
     fun loadMusicRow(): HomeFragmentRow {
-        val currentUserId = userRepository.currentUser.value?.id
-        val musicPlaylistQuery = org.jellyfin.sdk.model.api.request.GetItemsRequest(
+		val currentUserId = userRepository.currentUser.value?.id
+        val musicPlaylistQuery = GetItemsRequest(
             userId = currentUserId,
             includeItemTypes = setOf(BaseItemKind.PLAYLIST),
             mediaTypes = setOf(MediaType.AUDIO),
             sortBy = setOf(ItemSortBy.SORT_NAME),
-            limit = 50,
-            fields = ItemRepository.itemFields,
+            limit = ITEM_LIMIT,
+                fields = ItemRepository.itemFields,
             recursive = true,
             excludeItemTypes = setOf(BaseItemKind.MOVIE, BaseItemKind.SERIES, BaseItemKind.EPISODE)
         )
@@ -212,6 +143,12 @@ class HomeFragmentHelper(
     fun loadMysteryRow(): HomeFragmentRow = genreRow("Mystery")
     fun loadThrillerRow(): HomeFragmentRow = genreRow("Thriller")
     fun loadWarRow(): HomeFragmentRow = genreRow("War")
+    fun loadDocumentaryRow(): HomeFragmentRow = genreRow("Documentary")
+    fun loadRealityRow(): HomeFragmentRow? = genreRow("Reality")  // May return null if genre not found
+    fun loadFamilyRow(): HomeFragmentRow = genreRow("Family")
+    fun loadHorrorRow(): HomeFragmentRow = genreRow("Horror")
+    fun loadFantasyRow(): HomeFragmentRow = genreRow("Fantasy")
+    fun loadHistoryRow(): HomeFragmentRow = genreRow("History")
 
 
     fun loadRecentlyAdded(userViews: Collection<org.jellyfin.sdk.model.api.BaseItemDto>): HomeFragmentRow {
@@ -296,28 +233,29 @@ class HomeFragmentHelper(
             fields = ItemRepository.itemFields,
             imageTypeLimit = 1,
             enableTotalRecordCount = false,
-            mediaTypes = includeMediaTypes,
-            excludeItemTypes = setOf(BaseItemKind.AUDIO_BOOK),
+            mediaTypes = includeMediaTypes.toList(),
+            excludeItemTypes = listOf(BaseItemKind.AUDIO_BOOK)
         )
 
         // Create a custom row that will handle movie and episode cards differently
         return object : HomeFragmentRow {
             override fun addToRowsAdapter(
                 context: Context,
-                cardPresenter: org.jellyfin.androidtv.ui.presentation.CardPresenter,
-                rowsAdapter: org.jellyfin.androidtv.ui.presentation.MutableObjectAdapter<androidx.leanback.widget.Row>
+                cardPresenter: CardPresenter,
+                rowsAdapter: MutableObjectAdapter<Row>
             ) {
                 // Create a custom card presenter that uses thumb posters for movies and shows info
-                val continueWatchingPresenter = object : org.jellyfin.androidtv.ui.presentation.CardPresenter(
+                val continueWatchingPresenter = object : CardPresenter(
                     true,  // showInfo - set to true to show info below cards
-                    org.jellyfin.androidtv.constant.ImageType.THUMB,  // Use THUMB image type
+                    ImageType.THUMB,  // Use THUMB image type
                     260  // Increase height to accommodate info text
                 ) {
                     override fun onBindViewHolder(viewHolder: Presenter.ViewHolder, item: Any) {
                         super.onBindViewHolder(viewHolder, item)
-                        
+
+
                         // Set fixed dimensions for all cards in the row
-                        (viewHolder.view as? org.jellyfin.androidtv.ui.card.LegacyImageCardView)?.let { cardView ->
+                        (viewHolder.view as? LegacyImageCardView)?.let { cardView ->
                             cardView.setMainImageDimensions(260, 150) // Match Next up card height
                             // Ensure card type is set to show info below
                             cardView.cardType = BaseCardView.CARD_TYPE_INFO_UNDER
@@ -327,6 +265,7 @@ class HomeFragmentHelper(
                     setHomeScreen(true)
                     setUniformAspect(true)
                 }
+
 
                 // Add the row with our custom card presenter
                 HomeFragmentBrowseRowDefRow(BrowseRowDef(
@@ -341,24 +280,19 @@ class HomeFragmentHelper(
         }
     }
 
-    companion object {
-        private const val ITEM_LIMIT_RESUME = 50
-        private const val ITEM_LIMIT_RECORDINGS = 40
-        private const val ITEM_LIMIT_NEXT_UP = 50
-        private const val ITEM_LIMIT_ON_NOW = 20
-    }
+
 
     // Helper function to create a genre row with consistent styling
     private fun genreRow(genreName: String): HomeFragmentRow {
         val query = GetItemsRequest(
-            includeItemTypes = setOf(
+            includeItemTypes = listOf(
                 BaseItemKind.MOVIE,
                 BaseItemKind.SERIES,
                 BaseItemKind.MUSIC_ALBUM,
                 BaseItemKind.MUSIC_ARTIST,
                 BaseItemKind.MUSIC_VIDEO
             ),
-            excludeItemTypes = setOf(BaseItemKind.EPISODE),
+            excludeItemTypes = listOf(BaseItemKind.EPISODE),
             genres = listOf(genreName),
             sortBy = listOf(ItemSortBy.RANDOM),
             limit = 50,
@@ -372,11 +306,11 @@ class HomeFragmentHelper(
         return object : HomeFragmentRow {
             override fun addToRowsAdapter(
                 context: Context,
-                cardPresenter: org.jellyfin.androidtv.ui.presentation.CardPresenter,
-                rowsAdapter: org.jellyfin.androidtv.ui.presentation.MutableObjectAdapter<androidx.leanback.widget.Row>
+                cardPresenter: CardPresenter,
+                rowsAdapter: MutableObjectAdapter<Row>
             ) {
                 // Create a CardPresenter with no info and height of 195dp to match Recently Added
-                val noInfoCardPresenter = org.jellyfin.androidtv.ui.presentation.CardPresenter(false, 195).apply {
+                val noInfoCardPresenter = CardPresenter(false, 195).apply {
                     setHomeScreen(true)
                     setUniformAspect(true)
                 }
@@ -393,11 +327,11 @@ class HomeFragmentHelper(
         return object : HomeFragmentRow {
             override fun addToRowsAdapter(
                 context: Context,
-                cardPresenter: org.jellyfin.androidtv.ui.presentation.CardPresenter,
-                rowsAdapter: org.jellyfin.androidtv.ui.presentation.MutableObjectAdapter<androidx.leanback.widget.Row>
+                cardPresenter: CardPresenter,
+                rowsAdapter: MutableObjectAdapter<Row>
             ) {
                 // Create a standard CardPresenter with no info and height of 195dp to match Recently Added
-                val noInfoCardPresenter = org.jellyfin.androidtv.ui.presentation.CardPresenter(false, 195).apply {
+                val noInfoCardPresenter = CardPresenter(false, 195).apply {
                     setHomeScreen(true)
                     setUniformAspect(true)
                 }
@@ -407,3 +341,4 @@ class HomeFragmentHelper(
         }
     }
 }
+

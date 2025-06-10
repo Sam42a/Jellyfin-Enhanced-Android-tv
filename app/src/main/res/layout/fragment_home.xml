@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -15,7 +13,7 @@
 
     <TextView
         android:id="@+id/title"
-        android:layout_width="536dp"
+        android:layout_width="571dp"
         android:layout_height="31dp"
         android:layout_marginStart="50sp"
         android:layout_marginTop="20sp"
@@ -29,11 +27,10 @@
 
     <LinearLayout
         android:id="@+id/infoRow"
-        android:layout_width="492dp"
+        android:layout_width="250dp"
         android:layout_height="25dp"
         android:layout_marginStart="50sp"
         android:layout_marginTop="1.8sp"
-        android:layout_toStartOf="@id/title"
         android:baselineAligned="false"
         android:orientation="horizontal" />
 
@@ -55,7 +52,7 @@
         android:id="@+id/content_view"
         android:name="org.jellyfin.androidtv.ui.home.HomeRowsFragment"
         android:layout_width="match_parent"
-        android:layout_height="527dp"
+        android:layout_height="0dp"
         android:layout_weight="1"
         android:contentDescription="@string/home_content_description"
         android:descendantFocusability="afterDescendants"

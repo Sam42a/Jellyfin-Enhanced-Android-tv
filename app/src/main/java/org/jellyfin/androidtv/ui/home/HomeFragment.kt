@@ -29,13 +29,16 @@ import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.UUID
 
+// Removed interface as we'll use direct field access
+
 class HomeFragment : Fragment() {
     private val api: ApiClient by inject()
     private val imageHelper: ImageHelper by inject()
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
-
-
+    
+    @JvmField
+    var isReadyForInteraction = false
 
     private val sessionRepository by inject<SessionRepository>()
     private val userRepository by inject<UserRepository>()
@@ -65,8 +68,21 @@ class HomeFragment : Fragment() {
         _binding = null
     }
 
+    // Removed onAttach and onDetach as they're no longer needed with direct field access
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        
+        // Initially block interactions
+        view.isFocusableInTouchMode = false
+        view.isClickable = false
+        
+        // Set a delay to enable interactions after initial load
+        view.postDelayed({
+            isReadyForInteraction = true
+            view.isFocusableInTouchMode = true
+            view.isClickable = true
+        }, 1000) // 1 second delay, adjust based on your needs
 
         binding.toolbar.setContent {
             val searchAction = {
@@ -117,6 +133,8 @@ class HomeFragment : Fragment() {
     }
 
     private fun switchUser() {
+        if (!isReadyForInteraction) return
+        
         mediaManager.clearAudioQueue()
         sessionRepository.destroyCurrentSession()
 

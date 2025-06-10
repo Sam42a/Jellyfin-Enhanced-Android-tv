@@ -27,20 +27,49 @@ import org.koin.java.KoinJavaComponent
  */
 class ButtonViewPresenter : Presenter() {
     class ExtraSmallTextView(context: Context) : AppCompatTextView(context) {
-        // Create a drawable once for performance
-        private val focusedBackground = GradientDrawable().apply {
-            shape = GradientDrawable.RECTANGLE
-            cornerRadius = 16f
-            setColor(Color.argb(179, 48, 48, 48)) // 70% opacity grey
-        }
+        private var focusedBackground: GradientDrawable? = null
+        private var unfocusedBackground: GradientDrawable? = null
+        private var textColor: Int = Color.WHITE
+        private var focusedTextColor: Int = Color.WHITE
 
         init {
+            // Get theme attributes
+            val attrs = context.theme.obtainStyledAttributes(
+                intArrayOf(
+                    R.attr.mediaFolderButtonBackground,
+                    R.attr.mediaFolderButtonFocusedBackground,
+                    R.attr.mediaFolderButtonTextColor,
+                    R.attr.mediaFolderButtonFocusedTextColor
+                )
+            )
+
+            // Create focused background with theme color
+            focusedBackground = GradientDrawable().apply {
+                shape = GradientDrawable.RECTANGLE
+                cornerRadius = 16f
+                setColor(attrs.getColor(1, Color.argb(179, 48, 48, 48))) // Default to 70% opacity grey if not set
+            }
+
+
+            // Create unfocused background with theme color
+            unfocusedBackground = GradientDrawable().apply {
+                shape = GradientDrawable.RECTANGLE
+                cornerRadius = 16f
+                setColor(attrs.getColor(0, Color.TRANSPARENT)) // Default to transparent if not set
+            }
+
+            // Set text colors from theme
+            textColor = attrs.getColor(2, Color.WHITE)
+            focusedTextColor = attrs.getColor(3, Color.WHITE)
+
+            attrs.recycle()
+
             // Basic styling
             gravity = Gravity.CENTER
             setPadding(25, 15, 25, 15)
             textSize = 14f
             setTypeface(null, Typeface.BOLD)
-            setTextColor(Color.WHITE)
+            setTextColor(textColor)
         }
 
         // Handle the focus change directly in the view
@@ -50,9 +79,11 @@ class ButtonViewPresenter : Presenter() {
             // Set background and elevation based on focus state
             if (gainFocus) {
                 background = focusedBackground
+                setTextColor(focusedTextColor)
                 elevation = 8f
             } else {
-                background = null
+                background = unfocusedBackground
+                setTextColor(textColor)
                 elevation = 0f
             }
         }
@@ -108,14 +139,8 @@ class HomeFragmentViewsRow(
 		// Create the adapter with the selected presenter
 		val rowAdapter = ItemRowAdapter(context, GetUserViewsRequest, presenter, rowsAdapter)
 
-		// Determine the header text based on the presentation style
-		val headerText = if (useExtraSmall) {
-			context.getString(R.string.lbl_my_media_extra_small)
-		} else if (small) {
-			context.getString(R.string.lbl_my_media_small)
-		} else {
-			context.getString(R.string.lbl_my_media)
-		}
+		// Set empty header text to hide the title
+		val headerText = ""
 
 		val header = HeaderItem(headerText)
 		val row = ListRow(header, rowAdapter)

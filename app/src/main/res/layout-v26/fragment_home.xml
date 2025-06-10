@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--suppress AndroidUnresolvableTag -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -6,88 +7,104 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <androidx.compose.ui.platform.ComposeView
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <!-- Info Panel (Title, Info Row, Summary) -->
-    <TextView
-        android:id="@+id/title"
-        android:layout_width="570sp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="50sp"
-        android:layout_marginTop="16sp"
-        android:ellipsize="end"
-        android:fontFamily="@font/roboto_bold_family"
-        android:letterSpacing="0.02"
-        android:lineSpacingExtra="2sp"
-        android:maxLines="1"
-        android:text=""
-        android:textSize="20sp" />
-
-    <LinearLayout
-        android:id="@+id/infoRow"
-        android:layout_width="570sp"
-        android:layout_height="15.5sp"
-        android:layout_marginStart="50sp"
-        android:layout_marginTop="8sp"
-        android:layout_toStartOf="@id/title"
-        android:orientation="horizontal" />
-
-    <TextView
-        android:id="@+id/summary"
-        android:layout_width="453dp"
-        android:layout_height="69sp"
-        android:layout_marginStart="50sp"
-        android:layout_marginTop="10sp"
-        android:layout_marginBottom="10.8dp"
-        android:ellipsize="end"
-        android:fontFamily="sans-serif-light"
-        android:lineSpacingExtra="0.5sp"
-        android:maxLines="4"
-        android:text=""
-        android:textSize="13.8sp"
-        android:textStyle="bold" />
-
-    <!-- Extra spacing below info panel -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="6dp" />
-
-    <!-- Row Header Dock -->
     <androidx.leanback.widget.NonOverlappingLinearLayout
         android:id="@+id/row_header_dock"
+        style="?attr/rowHeaderDockStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        style="?attr/rowHeaderDockStyle"
         android:clipToPadding="false"
-        android:visibility="gone"
+        android:gravity="center_vertical"
+        android:minHeight="?android:attr/listPreferredItemHeight"
+        android:orientation="horizontal"
         android:paddingStart="50sp"
         android:paddingEnd="16dp"
-        android:gravity="center_vertical"
-        android:minHeight="?android:attr/listPreferredItemHeight">
+        android:visibility="gone"
+        tools:ignore="PrivateResource">
 
         <TextView
             android:id="@+id/row_header_title"
             style="?android:attr/textAppearanceMedium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:maxLines="1"
             android:ellipsize="end"
+            android:maxLines="1"
             android:textColor="@android:color/white"
             android:textStyle="bold"
             tools:text="Row Title" />
 
     </androidx.leanback.widget.NonOverlappingLinearLayout>
 
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+
+
+
+    <!-- Info Panel (Title, Info Row, Summary) -->
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="570sp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="28sp"
+        android:layout_marginTop="3sp"
+        android:ellipsize="end"
+        android:fontFamily="sans-serif-medium"
+        android:letterSpacing="0.02"
+        android:lineSpacingExtra="2sp"
+        android:maxLines="1"
+        android:text=""
+        android:textSize="20sp"
+        android:typeface="monospace" />
+
+    <!-- Extra spacing below info panel -->
+
+    <LinearLayout
+        android:id="@+id/infoRow"
+        android:layout_width="572dp"
+        android:layout_height="15.5sp"
+        android:layout_marginStart="27sp"
+        android:layout_marginTop="8sp"
+        android:layout_toStartOf="@id/summary"
+        android:orientation="horizontal"
+        tools:ignore="ObsoleteLayoutParam" />
+
+    <TextView
+        android:id="@+id/summary"
+        android:layout_width="453dp"
+        android:layout_height="69sp"
+        android:layout_marginStart="27sp"
+        android:layout_marginTop="18sp"
+        android:layout_marginBottom="10.8dp"
+        android:ellipsize="end"
+        android:fontFamily="sans-serif-medium"
+        android:lineSpacingExtra="1sp"
+        android:maxLines="4"
+        android:text=""
+        android:textAlignment="textStart"
+        android:textSize="13.8sp"
+        android:typeface="monospace" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="6dp"
+        android:visibility="invisible" />
+
+    <!-- Row Header Dock -->
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/content_view"
         android:name="org.jellyfin.androidtv.ui.home.HomeRowsFragment"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="match_parent"
+        android:layout_marginStart="-25sp"
+        android:baselineAligned="true"
         android:contentDescription="@string/home_content_description"
         android:descendantFocusability="afterDescendants"
         android:focusable="true"
@@ -96,4 +113,5 @@
 
         <requestFocus />
     </androidx.fragment.app.FragmentContainerView>
+
 </LinearLayout>

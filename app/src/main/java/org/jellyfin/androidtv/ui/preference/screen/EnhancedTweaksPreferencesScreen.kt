@@ -18,7 +18,6 @@ class EnhancedTweaksPreferencesScreen : OptionsFragment() {
         setTitle(R.string.enhanced_tweaks)
 
         category {
-            setTitle(R.string.enhanced_tweaks)
 
             link {
                 setTitle(R.string.backdrop_settings)
@@ -55,14 +54,6 @@ class EnhancedTweaksPreferencesScreen : OptionsFragment() {
             checkbox {
                 setTitle(R.string.show_my_collections_row)
                 bind(userSettingPreferences, userSettingPreferences.showMyCollectionsRow)
-            }
-            checkbox {
-                setTitle(R.string.show_suggested_tv_shows_row)
-                bind(userSettingPreferences, userSettingPreferences.showSuggestedTvShowsRow)
-            }
-            checkbox {
-                setTitle(R.string.show_suggested_for_you_row)
-                bind(userSettingPreferences, userSettingPreferences.showSuggestedMoviesRow)
             }
             checkbox {
                 setTitle(R.string.show_sci_fi_row)

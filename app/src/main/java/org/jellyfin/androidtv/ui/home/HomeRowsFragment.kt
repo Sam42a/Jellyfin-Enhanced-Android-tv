@@ -96,7 +96,7 @@ class HomeRowsFragment : RowsSupportFragment(), AudioEventListener, View.OnKeyLi
 			// Enable select effect for rows
 			setSelectEffectEnabled(true)
 		}
-		
+
 		// Set the adapter with our custom row presenter
 		adapter = MutableObjectAdapter<Row>(rowPresenter)
 
@@ -182,16 +182,6 @@ class HomeRowsFragment : RowsSupportFragment(), AudioEventListener, View.OnKeyLi
                 if (userSettingPreferences.get(userSettingPreferences.showFavoritesRow)) {
                     Timber.d("Adding Favorites row")
                     helper.loadFavoritesRow().addToRowsAdapter(requireContext(), cardPresenter, rowsAdapter)
-                }
-                // Add Suggested TV Shows row if enabled
-                if (userSettingPreferences.get(userSettingPreferences.showSuggestedTvShowsRow)) {
-                    Timber.d("Adding Suggested TV Shows row after Favorites")
-                    helper.loadSuggestedTvShowsRow().addToRowsAdapter(requireContext(), cardPresenter, rowsAdapter)
-                }
-                // Add Suggested Movies row if enabled (only here, not elsewhere)
-                if (userSettingPreferences.get(userSettingPreferences.showSuggestedMoviesRow)) {
-                    Timber.d("Adding Suggested Movies row after Suggested TV Shows")
-                    helper.loadSuggestedMoviesRow().addToRowsAdapter(requireContext(), cardPresenter, rowsAdapter)
                 }
 				if (userSettingPreferences.get(userSettingPreferences.showSciFiRow)) {
                     helper.loadSciFiRow().addToRowsAdapter(requireContext(), cardPresenter, rowsAdapter)
@@ -387,7 +377,7 @@ class HomeRowsFragment : RowsSupportFragment(), AudioEventListener, View.OnKeyLi
             titleView = activity.findViewById<android.widget.TextView>(R.id.title)
             infoRowView = activity.findViewById<android.widget.LinearLayout>(R.id.infoRow)
             summaryView = activity.findViewById<android.widget.TextView>(R.id.summary)
-            
+
             // If we have a current item, update the views with its data
             currentItem?.let { item ->
                 titleView?.setText(item.getName(requireContext()))
@@ -408,7 +398,7 @@ class HomeRowsFragment : RowsSupportFragment(), AudioEventListener, View.OnKeyLi
         titleView?.setText("")
         infoRowView?.removeAllViews()
         summaryView?.setText("")
-        
+
         // Only clear backgrounds if we're not on a Media Folders item or if forced
         if (forceClear || currentItem == null || !homeFragmentViewsRow.isMediaFoldersItem(currentItem)) {
             backgroundService.clearBackgrounds()
@@ -418,11 +408,11 @@ class HomeRowsFragment : RowsSupportFragment(), AudioEventListener, View.OnKeyLi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         ensureViewsInitialized()
-        
+
         // Initialize any additional views here
         initializeViews()
     }
-    
+
     private fun initializeViews() {
         // Any additional view initialization can go here
     }
@@ -437,17 +427,17 @@ private inner class ItemViewSelectedListener : OnItemViewSelectedListener {
         row: Row?,
     ) {
         ensureViewsInitialized()
-        
+
         // Check if the item is from the Media Folders row or has the media_folders_item tag
-        val isMediaFolderItem = homeFragmentViewsRow.isMediaFoldersItem(item) || 
+        val isMediaFolderItem = homeFragmentViewsRow.isMediaFoldersItem(item) ||
                               (item is BaseRowItem && itemViewHolder?.view?.tag == "media_folders_item")
-        
+
         if (isMediaFolderItem) {
             // For Media Folders items, clear the info panel but keep the background
             titleView?.setText("")
             infoRowView?.removeAllViews()
             summaryView?.setText("")
-            
+
             // Set the background using the Media Folder's primary image
             if (item is BaseRowItem) {
                 currentItem = item
@@ -456,7 +446,7 @@ private inner class ItemViewSelectedListener : OnItemViewSelectedListener {
             }
             return
         }
-        
+
         if (item !is BaseRowItem) {
             currentItem = null
             // Clear info panel and background
@@ -464,7 +454,7 @@ private inner class ItemViewSelectedListener : OnItemViewSelectedListener {
         } else {
             currentItem = item
             currentRow = row as? ListRow
-            
+
             // Safely cast row to ListRow and get its adapter
             (row as? ListRow)?.let { listRow ->
                 val itemRowAdapter = listRow.adapter as? ItemRowAdapter
