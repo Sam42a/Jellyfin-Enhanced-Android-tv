@@ -202,11 +202,25 @@ class AuthenticationRepositoryImpl(
 		else false
 	}
 
-	override fun getUserImageUrl(server: Server, user: User): String? = user.imageTag?.let { tag ->
-		jellyfin.createApi(server.address).imageApi.getUserImageUrl(
-			userId = user.id,
-			tag = tag,
-			maxHeight = ImageHelper.MAX_PRIMARY_IMAGE_HEIGHT
-		)
-	}
+	override fun getUserImageUrl(server: Server, user: User): String? {
+    // If user has an image tag, return their profile image URL
+    user.imageTag?.let { tag ->
+        return jellyfin.createApi(server.address).imageApi.getUserImageUrl(
+            userId = user.id,
+            tag = tag,
+            maxHeight = ImageHelper.MAX_PRIMARY_IMAGE_HEIGHT
+        )
+    }
+    
+    // If no profile image, return a random fallback image
+    val fallbackImages = listOf(
+        "file:///android_asset/Default1.png",
+        "file:///android_asset/Default2.png",
+        "file:///android_asset/Default3.png"
+    )
+    
+    // Generate a consistent index based on user ID to keep the same image per user
+    val userIndex = user.id.hashCode().mod(fallbackImages.size).let { if (it < 0) -it else it }
+    return fallbackImages[userIndex]
+}
 }

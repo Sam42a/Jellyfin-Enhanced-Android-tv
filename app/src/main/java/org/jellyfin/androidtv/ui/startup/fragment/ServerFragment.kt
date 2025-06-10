@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.jellyfin.androidtv.R
+import org.jellyfin.androidtv.ui.AsyncImageView
 import org.jellyfin.androidtv.auth.model.ApiClientErrorLoginState
 import org.jellyfin.androidtv.auth.model.AuthenticatedState
 import org.jellyfin.androidtv.auth.model.AuthenticatingState
@@ -221,19 +222,39 @@ class ServerFragment : Fragment() {
 
 		override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 			val view = LayoutInflater.from(parent.context).inflate(R.layout.view_circular_user_profile, parent, false)
-			return ViewHolder(view).apply {
-				itemView.setOnClickListener {
-					val position = bindingAdapterPosition
-					if (position != RecyclerView.NO_POSITION) {
-						onItemPressed(getItem(position))
+			return ViewHolder(view)
+		}
+
+		override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+			val user = getItem(position)
+
+			// Load the profile image
+			val placeholder = ContextCompat.getDrawable(holder.itemView.context, R.drawable.tile_user)
+			holder.profileImage.load(
+				url = startupViewModel.getUserImage(server, user),
+				blurHash = null,
+				placeholder = placeholder,
+				aspectRatio = 1.0,
+				blurHashResolution = 32
+			)
+
+			holder.itemView.findViewById<TextView>(R.id.name).text = user.name
+
+			// Set focus change listener for animations
+			holder.container.setOnFocusChangeListener { _, hasFocus ->
+				holder.itemView.animate()
+					.scaleX(if (hasFocus) 1.05f else 1.0f)
+					.scaleY(if (hasFocus) 1.05f else 1.0f)
+					.translationZ(if (hasFocus) 8.8f else 0f)
+					.setDuration(200)
+					.start()
+
+				if (hasFocus) {
+					// Scroll to the focused position
+					holder.itemView.post {
+						val recyclerView = holder.itemView.parent as? RecyclerView
+						recyclerView?.smoothScrollToPosition(holder.bindingAdapterPosition)
 					}
-				}
-				itemView.setOnLongClickListener {
-					val position = bindingAdapterPosition
-					if (position != RecyclerView.NO_POSITION) {
-						showUserMenu(it, getItem(position))
-					}
-					true
 				}
 			}
 		}
@@ -258,48 +279,30 @@ class ServerFragment : Fragment() {
 					true
 				}
 			}
-
-			popup.show()
 		}
 
-		override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-			val item = getItem(position)
-			// Set user image
-			val imageView = holder.itemView.findViewById<org.jellyfin.androidtv.ui.AsyncImageView>(R.id.profile_image)
-			val placeholder = ContextCompat.getDrawable(context, R.drawable.tile_user)
+		inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+			val profileImage: AsyncImageView = itemView.findViewById(R.id.profile_image)
+			val container: ViewGroup = itemView.findViewById(R.id.profile_container)
 
-			imageView.load(
-				url = startupViewModel.getUserImage(server, item),
-				placeholder = placeholder,
-				aspectRatio = 1.0
-			)
-
-			// Set username text
-			val nameView = holder.itemView.findViewById<TextView>(R.id.name)
-			Timber.d("Setting username to: %s", item.name)
-			nameView.text = item.name
-			nameView.visibility = View.VISIBLE
-			Timber.d("NameView visibility: %s, text: %s", nameView.visibility, nameView.text)
-
-			// Handle focus changes with animation
-			holder.itemView.setOnFocusChangeListener { view, hasFocus ->
-				view.animate()
-					.scaleX(if (hasFocus) 1.05f else 1.0f)
-					.scaleY(if (hasFocus) 1.05f else 1.0f)
-					.translationZ(if (hasFocus) 8.8f else 0f)
-					.setDuration(200)
-					.start()
-
-				if (hasFocus) {
-					// Scroll to the focused position
-					view.post {
-						val recyclerView = view.parent as? RecyclerView
-						recyclerView?.smoothScrollToPosition(holder.bindingAdapterPosition)
+			init {
+				// Set click listener on the container
+				container.setOnClickListener {
+					val position = bindingAdapterPosition
+					if (position != RecyclerView.NO_POSITION) {
+						onItemPressed(getItem(position))
 					}
+				}
+
+				// Set long click listener on the container
+				container.setOnLongClickListener {
+					val position = bindingAdapterPosition
+					if (position != RecyclerView.NO_POSITION) {
+						showUserMenu(it, getItem(position))
+					}
+					true
 				}
 			}
 		}
-
-		inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 	}
 }

@@ -7,38 +7,36 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:gravity="center_horizontal"
-    android:focusable="true"
-    android:focusableInTouchMode="true"
+    android:focusable="false"
+    android:focusableInTouchMode="false"
+    android:clickable="false"
     android:clipChildren="false"
     android:clipToPadding="false"
     android:padding="16dp">
 
     <!-- Profile Image Container -->
     <FrameLayout
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:background="@drawable/circle_background"
-        android:clipChildren="false"
-        android:clipToPadding="false"
-        android:focusable="false"
-        android:focusableInTouchMode="false">
+        android:id="@+id/profile_container"
+        android:layout_width="126dp"
+        android:layout_height="126dp"
+        android:background="@drawable/profile_background_selector"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:clickable="true"
+        android:padding="3dp">
 
         <org.jellyfin.androidtv.ui.AsyncImageView
             android:id="@+id/profile_image"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:adjustViewBounds="true"
-            android:background="@drawable/circle_background"
-            android:clipToOutline="true"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:scaleType="centerCrop"
             android:focusable="false"
             android:focusableInTouchMode="false"
-            android:scaleType="centerCrop"
-            app:circleCrop="true"
+            android:clickable="false"
             android:contentDescription="@string/profile_picture"
+            app:circleCrop="true"
             tools:src="@drawable/tile_user" />
     </FrameLayout>
-
     <!-- Username -->
     <TextView
         android:id="@+id/name"

@@ -11,7 +11,7 @@
 
     <TextView
         style="@style/TextAppearance.AppCompat.Body2"
-        android:layout_width="400dp"
+        android:layout_width="398dp"
         android:textAlignment="center"
         android:layout_height="wrap_content"
         android:privateImeOptions="horizontalAlignment=center"

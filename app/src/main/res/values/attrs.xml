@@ -37,6 +37,16 @@
         <attr name="buttonTextColor" format="reference|color" />
         <attr name="surfaceColor" format="reference|color" />
         <attr name="onSurfaceColor" format="reference|color" />
+        <!-- Backdrop filter color -->
+        <attr name="background_filter" format="reference|color" />
+        <!-- Backdrop fading effect color -->
+        <attr name="backdrop_fading_color" format="reference|color" />
+        
+        <!-- Media Folders Buttons -->
+        <attr name="mediaFolderButtonBackground" format="reference|color" />
+        <attr name="mediaFolderButtonFocusedBackground" format="reference|color" />
+        <attr name="mediaFolderButtonTextColor" format="reference|color" />
+        <attr name="mediaFolderButtonFocusedTextColor" format="reference|color" />
     </declare-styleable>
     <declare-styleable name="StrokeTextView">
         <attr name="strokeWidth" format="float" />

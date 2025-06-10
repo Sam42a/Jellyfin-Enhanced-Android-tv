@@ -14,6 +14,7 @@ import org.jellyfin.androidtv.databinding.ViewButtonServerBinding
 import org.jellyfin.androidtv.util.MenuBuilder
 import org.jellyfin.androidtv.util.popupMenu
 import org.jellyfin.androidtv.util.showIfNotEmpty
+import androidx.core.content.ContextCompat
 
 class ServerButtonView @JvmOverloads constructor(
 	context: Context,
@@ -27,7 +28,8 @@ class ServerButtonView @JvmOverloads constructor(
 		isFocusable = true
 		isClickable = true
 		descendantFocusability = ViewGroup.FOCUS_BLOCK_DESCENDANTS
-		foreground = ResourcesCompat.getDrawable(resources, R.drawable.ripple, context.theme)
+		// Use the same ripple as the default button style
+		foreground = ContextCompat.getDrawable(context, R.drawable.button_default_ripple)
 	}
 
 	var name: String
