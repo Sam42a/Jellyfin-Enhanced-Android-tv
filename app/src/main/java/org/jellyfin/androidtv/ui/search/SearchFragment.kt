@@ -18,6 +18,10 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.jellyfin.androidtv.databinding.FragmentSearchBinding
 import org.jellyfin.androidtv.R
+import org.jellyfin.androidtv.ui.itemhandling.BaseRowItem
+import org.jellyfin.androidtv.constant.ImageType
+import org.jellyfin.androidtv.util.ImageHelper
+import org.jellyfin.androidtv.util.ImagePreloader
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -30,13 +34,6 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
-import org.jellyfin.androidtv.util.ImageHelper
-import org.jellyfin.androidtv.ui.itemhandling.BaseRowItem
-import org.jellyfin.androidtv.constant.ImageType
-import org.jellyfin.androidtv.util.ImagePreloader
-import org.koin.android.ext.android.get
-import org.koin.androidx.compose.get
-import org.koin.java.KoinJavaComponent.get as get1
 
 class SearchFragment : Fragment() {
 	companion object {
@@ -77,7 +74,6 @@ class SearchFragment : Fragment() {
 		return binding.root
 	}
 
-	@RequiresApi(Build.VERSION_CODES.M)
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 
@@ -134,7 +130,7 @@ class SearchFragment : Fragment() {
                 // import org.jellyfin.androidtv.constant.ImageType
                 // import org.jellyfin.androidtv.util.ImagePreloader
 
-                val imageHelper = get1<ImageHelper>(ImageHelper::class.java)
+                val imageHelper: ImageHelper by inject()
                 val width: Int = 300 // or whatever your card width is
                 val height: Int = 450 // or whatever your card height is
                 for (rowIdx in 0 until searchFragmentDelegate.rowsAdapter.size()) {
@@ -142,13 +138,13 @@ class SearchFragment : Fragment() {
                     val listRow = row as? androidx.leanback.widget.ListRow ?: continue
                     val adapter = listRow.adapter as? androidx.leanback.widget.ObjectAdapter ?: continue
                     val items = (0 until adapter.size()).mapNotNull { idx: Int ->
-    adapter.get(idx) as? org.jellyfin.androidtv.ui.itemhandling.BaseRowItem
+    adapter.get(idx) as? BaseRowItem
 }
                     val urls = items.take(5).mapNotNull { item ->
-                        item.getImageUrl(requireContext(), imageHelper, org.jellyfin.androidtv.constant.ImageType.POSTER, width, height)
+                        item.getImageUrl(requireContext(), imageHelper, ImageType.POSTER, width, height)
                     }
                     if (urls.isNotEmpty()) {
-                        org.jellyfin.androidtv.util.ImagePreloader.preloadImages(requireContext(), urls)
+                        ImagePreloader.preloadImages(requireContext(), urls)
                     }
                 }
 			}
@@ -166,7 +162,6 @@ class SearchFragment : Fragment() {
 
 	override fun onDestroyView() {
 		super.onDestroyView()
-
 		_binding = null
 	}
 
