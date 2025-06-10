@@ -5,12 +5,14 @@ import static org.koin.java.KoinJavaComponent.inject;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.KeyEvent;
+import timber.log.Timber;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -62,6 +64,7 @@ import org.koin.java.KoinJavaComponent;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import kotlin.Lazy;
 import kotlinx.serialization.json.Json;
@@ -96,8 +99,8 @@ public class EnhancedBrowseFragment extends Fragment implements RowLoader, View.
     protected BaseRowItem mCurrentItem;
     protected ListRow mCurrentRow;
 
-    private Lazy<BackgroundService> backgroundService = inject(BackgroundService.class);
-    private Lazy<MarkdownRenderer> markdownRenderer = inject(MarkdownRenderer.class);
+    private final Lazy<BackgroundService> backgroundService = inject(BackgroundService.class);
+    private final Lazy<MarkdownRenderer> markdownRenderer = inject(MarkdownRenderer.class);
     private final Lazy<CustomMessageRepository> customMessageRepository = inject(CustomMessageRepository.class);
     private final Lazy<NavigationRepository> navigationRepository = inject(NavigationRepository.class);
     private final Lazy<ApiClient> api = inject(ApiClient.class);
@@ -108,7 +111,7 @@ public class EnhancedBrowseFragment extends Fragment implements RowLoader, View.
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mRowsAdapter = new MutableObjectAdapter<Row>(new PositionableListRowPresenter());
+        mRowsAdapter = new MutableObjectAdapter<>(new PositionableListRowPresenter());
 
         setupViews();
         setupQueries(this);
@@ -116,7 +119,7 @@ public class EnhancedBrowseFragment extends Fragment implements RowLoader, View.
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         EnhancedDetailBrowseBinding binding = EnhancedDetailBrowseBinding.inflate(inflater, container, false);
 
         mTitle = binding.title;
@@ -134,6 +137,7 @@ public class EnhancedBrowseFragment extends Fragment implements RowLoader, View.
                     .findFragmentById(R.id.rowsFragment);
         }
 
+        assert mRowsFragment != null;
         mRowsFragment.setAdapter(mRowsAdapter);
 
         return binding.getRoot();
@@ -142,6 +146,11 @@ public class EnhancedBrowseFragment extends Fragment implements RowLoader, View.
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        // Set initial title from mFolder if available
+        if (mTitle != null && mFolder != null && mFolder.getName() != null) {
+            mTitle.setText(mFolder.getName());
+        }
 
         setupEventListeners();
     }
@@ -158,6 +167,7 @@ public class EnhancedBrowseFragment extends Fragment implements RowLoader, View.
     }
 
     protected void setupViews() {
+        assert getArguments() != null;
         if (!getArguments().containsKey(Extras.Folder)) return;
         mFolder = Json.Default.decodeFromString(BaseItemDto.Companion.serializer(), getArguments().getString(Extras.Folder));
         if (mFolder == null) return;
@@ -172,9 +182,6 @@ public class EnhancedBrowseFragment extends Fragment implements RowLoader, View.
                     break;
                 case MUSIC:
                     itemType = BaseItemKind.MUSIC_ALBUM;
-                    break;
-                case FOLDERS:
-                    showViews = false;
                     break;
                 default:
                     showViews = false;
@@ -207,8 +214,8 @@ public class EnhancedBrowseFragment extends Fragment implements RowLoader, View.
 
                         for (int i = 0; i < mRowsAdapter.size(); i++) {
                             if (mRowsAdapter.get(i) instanceof ListRow) {
-                                if (((ListRow) mRowsAdapter.get(i)).getAdapter() instanceof ItemRowAdapter) {
-                                    ((ItemRowAdapter) ((ListRow) mRowsAdapter.get(i)).getAdapter()).ReRetrieveIfNeeded();
+                                if (((ListRow) Objects.requireNonNull(mRowsAdapter.get(i))).getAdapter() instanceof ItemRowAdapter) {
+                                    ((ItemRowAdapter) ((ListRow) Objects.requireNonNull(mRowsAdapter.get(i))).getAdapter()).ReRetrieveIfNeeded();
                                 }
                             }
                         }
@@ -221,7 +228,7 @@ public class EnhancedBrowseFragment extends Fragment implements RowLoader, View.
     }
 
     public void loadRows(List<BrowseRowDef> rows) {
-        mRowsAdapter = new MutableObjectAdapter<Row>(new PositionableListRowPresenter());
+        mRowsAdapter = new MutableObjectAdapter<>(new PositionableListRowPresenter());
         mCardPresenter = new CardPresenter(false, 140);
         ClassPresenterSelector ps = new ClassPresenterSelector();
         ps.addClassPresenter(GridButtonBaseRowItem.class, new GridButtonPresenter(155, 140));
@@ -229,45 +236,26 @@ public class EnhancedBrowseFragment extends Fragment implements RowLoader, View.
 
         for (BrowseRowDef def : rows) {
             HeaderItem header = new HeaderItem(def.getHeaderText());
-            ItemRowAdapter rowAdapter;
-            switch (def.getQueryType()) {
-                case NextUp:
-                    rowAdapter = new ItemRowAdapter(requireContext(), def.getNextUpQuery(), true, mCardPresenter, mRowsAdapter);
-                    break;
-                case LatestItems:
-                    rowAdapter = new ItemRowAdapter(requireContext(), def.getLatestItemsQuery(), true, mCardPresenter, mRowsAdapter);
-                    break;
-                case Views:
-                    rowAdapter = new ItemRowAdapter(requireContext(), GetUserViewsRequest.INSTANCE, mCardPresenter, mRowsAdapter);
-                    break;
-                case SimilarSeries:
-                    rowAdapter = new ItemRowAdapter(requireContext(), def.getSimilarQuery(), QueryType.SimilarSeries, mCardPresenter, mRowsAdapter);
-                    break;
-                case SimilarMovies:
-                    rowAdapter = new ItemRowAdapter(requireContext(), def.getSimilarQuery(), QueryType.SimilarMovies, mCardPresenter, mRowsAdapter);
-                    break;
-                case LiveTvChannel:
-                    rowAdapter = new ItemRowAdapter(requireContext(), def.getTvChannelQuery(), 40, mCardPresenter, mRowsAdapter);
-                    break;
-                case LiveTvProgram:
-                    rowAdapter = new ItemRowAdapter(requireContext(), def.getProgramQuery(), mCardPresenter, mRowsAdapter);
-                    break;
-                case LiveTvRecording:
-                    rowAdapter = new ItemRowAdapter(requireContext(), def.getRecordingQuery(), def.getChunkSize(), mCardPresenter, mRowsAdapter);
-                    break;
-                case Premieres:
-                    rowAdapter = new ItemRowAdapter(requireContext(), def.getQuery(), def.getChunkSize(), def.getPreferParentThumb(), def.isStaticHeight(), mCardPresenter, mRowsAdapter, def.getQueryType());
-                    break;
-                case SeriesTimer:
-                    rowAdapter = new ItemRowAdapter(requireContext(), def.getSeriesTimerQuery(), mCardPresenter, mRowsAdapter);
-                    break;
-                case Specials:
-                    rowAdapter = new ItemRowAdapter(requireContext(), def.getSpecialsQuery(), new CardPresenter(true, ImageType.THUMB, 150), mRowsAdapter);
-                    break;
-                default:
-                    rowAdapter = new ItemRowAdapter(requireContext(), def.getQuery(), def.getChunkSize(), def.getPreferParentThumb(), def.isStaticHeight(), ps, mRowsAdapter, def.getQueryType());
-                    break;
-            }
+            ItemRowAdapter rowAdapter = switch (def.getQueryType()) {
+                case NextUp -> new ItemRowAdapter(requireContext(), def.getNextUpQuery(), true, mCardPresenter, mRowsAdapter);
+                case LatestItems -> new ItemRowAdapter(requireContext(), def.getLatestItemsQuery(), true, mCardPresenter, mRowsAdapter);
+                case Views -> new ItemRowAdapter(requireContext(), GetUserViewsRequest.INSTANCE, mCardPresenter, mRowsAdapter);
+                case SimilarSeries ->
+                        new ItemRowAdapter(requireContext(), def.getSimilarQuery(), QueryType.SimilarSeries, mCardPresenter, mRowsAdapter);
+                case SimilarMovies ->
+                        new ItemRowAdapter(requireContext(), def.getSimilarQuery(), QueryType.SimilarMovies, mCardPresenter, mRowsAdapter);
+                case LiveTvChannel -> new ItemRowAdapter(requireContext(), def.getTvChannelQuery(), 40, mCardPresenter, mRowsAdapter);
+                case LiveTvProgram -> new ItemRowAdapter(requireContext(), def.getProgramQuery(), mCardPresenter, mRowsAdapter);
+                case LiveTvRecording ->
+                        new ItemRowAdapter(requireContext(), def.getRecordingQuery(), def.getChunkSize(), mCardPresenter, mRowsAdapter);
+                case Premieres ->
+                        new ItemRowAdapter(requireContext(), def.getQuery(), def.getChunkSize(), def.getPreferParentThumb(), def.isStaticHeight(), mCardPresenter, mRowsAdapter, def.getQueryType());
+                case SeriesTimer -> new ItemRowAdapter(requireContext(), def.getSeriesTimerQuery(), mCardPresenter, mRowsAdapter);
+                case Specials ->
+                        new ItemRowAdapter(requireContext(), def.getSpecialsQuery(), new CardPresenter(true, ImageType.THUMB, 150), mRowsAdapter);
+                default ->
+                        new ItemRowAdapter(requireContext(), def.getQuery(), def.getChunkSize(), def.getPreferParentThumb(), def.isStaticHeight(), ps, mRowsAdapter, def.getQueryType());
+            };
 
             rowAdapter.setReRetrieveTriggers(def.getChangeTriggers());
 
@@ -353,83 +341,113 @@ public class EnhancedBrowseFragment extends Fragment implements RowLoader, View.
     private final class SpecialViewClickedListener implements OnItemViewClickedListener {
         @Override
         public void onItemClicked(Presenter.ViewHolder itemViewHolder, Object item, RowPresenter.ViewHolder rowViewHolder, Row row) {
-            if (item instanceof GridButtonBaseRowItem) item = ((GridButtonBaseRowItem) item).getGridButton();
-            if (item instanceof GridButton) {
-                switch (((GridButton) item).getId()) {
+            // Check if fragment is still attached to activity
+            if (!isAdded() || getActivity() == null || getActivity().isFinishing() || getActivity().isDestroyed()) {
+                return;
+            }
+
+            try {
+                if (item instanceof GridButtonBaseRowItem) item = ((GridButtonBaseRowItem) item).getGridButton();
+                if (!(item instanceof GridButton button)) return;
+
+                NavigationRepository navRepo = navigationRepository.getValue();
+                if (navRepo == null) return;
+
+                switch (button.getId()) {
                     case GRID:
-                        navigationRepository.getValue().navigate(Destinations.INSTANCE.libraryBrowser(mFolder));
+                        if (mFolder != null) {
+                            navRepo.navigate(Destinations.INSTANCE.libraryBrowser(mFolder));
+                        }
                         break;
 
                     case ALBUMS:
-                        mFolder = JavaCompat.copyWithDisplayPreferencesId(mFolder, mFolder.getId() + "AL");
-
-                        navigationRepository.getValue().navigate(Destinations.INSTANCE.libraryBrowser(mFolder, BaseItemKind.MUSIC_ALBUM.getSerialName()));
+                        if (mFolder != null) {
+                            mFolder = JavaCompat.copyWithDisplayPreferencesId(mFolder, mFolder.getId() + "AL");
+                            navRepo.navigate(Destinations.INSTANCE.libraryBrowser(mFolder, BaseItemKind.MUSIC_ALBUM.getSerialName()));
+                        }
                         break;
 
                     case ALBUM_ARTISTS:
-                        mFolder = JavaCompat.copyWithDisplayPreferencesId(mFolder, mFolder.getId() + "AR");
-
-                        navigationRepository.getValue().navigate(Destinations.INSTANCE.libraryBrowser(mFolder, "AlbumArtist"));
+                        if (mFolder != null) {
+                            mFolder = JavaCompat.copyWithDisplayPreferencesId(mFolder, mFolder.getId() + "AR");
+                            navRepo.navigate(Destinations.INSTANCE.libraryBrowser(mFolder, "AlbumArtist"));
+                        }
                         break;
 
                     case ARTISTS:
-                        mFolder = JavaCompat.copyWithDisplayPreferencesId(mFolder, mFolder.getId() + "AR");
-
-                        navigationRepository.getValue().navigate(Destinations.INSTANCE.libraryBrowser(mFolder, "Artist"));
+                        if (mFolder != null) {
+                            mFolder = JavaCompat.copyWithDisplayPreferencesId(mFolder, mFolder.getId() + "AR");
+                            navRepo.navigate(Destinations.INSTANCE.libraryBrowser(mFolder, "Artist"));
+                        }
                         break;
 
                     case BY_LETTER:
-                        navigationRepository.getValue().navigate(Destinations.INSTANCE.libraryByLetter(mFolder, itemType.getSerialName()));
+                        if (mFolder != null && itemType != null) {
+                            navRepo.navigate(Destinations.INSTANCE.libraryByLetter(mFolder, itemType.getSerialName()));
+                        }
                         break;
 
                     case GENRES:
-                        navigationRepository.getValue().navigate(Destinations.INSTANCE.libraryByGenres(mFolder, itemType.getSerialName()));
+                        if (mFolder != null && itemType != null) {
+                            navRepo.navigate(Destinations.INSTANCE.libraryByGenres(mFolder, itemType.getSerialName()));
+                        }
                         break;
 
                     case RANDOM:
-                        BrowsingUtils.getRandomItem(api.getValue(), getViewLifecycleOwner(), mFolder, itemType, randomItem -> {
-                            if (randomItem != null) {
-                                if (randomItem.getType() == BaseItemKind.MUSIC_ALBUM) {
-                                    navigationRepository.getValue().navigate(Destinations.INSTANCE.itemList(randomItem.getId()));
-                                } else {
-                                    navigationRepository.getValue().navigate(Destinations.INSTANCE.itemDetails(randomItem.getId()));
+                        if (mFolder != null && itemType != null && api.getValue() != null) {
+                            BrowsingUtils.getRandomItem(api.getValue(), getViewLifecycleOwner(), mFolder, itemType, randomItem -> {
+                                if (randomItem != null) {
+                                    if (randomItem.getType() == BaseItemKind.MUSIC_ALBUM) {
+                                        navRepo.navigate(Destinations.INSTANCE.itemList(randomItem.getId()));
+                                    } else {
+                                        navRepo.navigate(Destinations.INSTANCE.itemDetails(randomItem.getId()));
+                                    }
                                 }
-                            }
-
-                            return null;
-                        });
+                                return null;
+                            });
+                        }
                         break;
 
                     case SUGGESTED:
-                        navigationRepository.getValue().navigate(Destinations.INSTANCE.librarySuggestions(mFolder));
+                        if (mFolder != null) {
+                            navRepo.navigate(Destinations.INSTANCE.librarySuggestions(mFolder));
+                        }
                         break;
 
                     case FAVSONGS:
-                        navigationRepository.getValue().navigate(Destinations.INSTANCE.musicFavorites(mFolder.getId()));
+                        if (mFolder != null) {
+                            navRepo.navigate(Destinations.INSTANCE.musicFavorites(mFolder.getId()));
+                        }
                         break;
 
                     case SERIES:
                     case LiveTvOption.LIVE_TV_SERIES_OPTION_ID:
-                        navigationRepository.getValue().navigate(Destinations.INSTANCE.getLiveTvSeriesRecordings());
+                        navRepo.navigate(Destinations.INSTANCE.getLiveTvSeriesRecordings());
                         break;
 
                     case SCHEDULE:
                     case LiveTvOption.LIVE_TV_SCHEDULE_OPTION_ID:
-                        navigationRepository.getValue().navigate(Destinations.INSTANCE.getLiveTvSchedule());
+                        navRepo.navigate(Destinations.INSTANCE.getLiveTvSchedule());
                         break;
 
                     case LiveTvOption.LIVE_TV_RECORDINGS_OPTION_ID:
-                        navigationRepository.getValue().navigate(Destinations.INSTANCE.getLiveTvRecordings());
+                        navRepo.navigate(Destinations.INSTANCE.getLiveTvRecordings());
                         break;
 
                     case LiveTvOption.LIVE_TV_GUIDE_OPTION_ID:
-                        navigationRepository.getValue().navigate(Destinations.INSTANCE.getLiveTvGuide());
+                        navRepo.navigate(Destinations.INSTANCE.getLiveTvGuide());
                         break;
 
                     default:
-                        Toast.makeText(requireContext(), item.toString() + getString(R.string.msg_not_implemented), Toast.LENGTH_SHORT).show();
+                        Context context = getContext();
+                        if (context != null) {
+                            Toast.makeText(context, item + getString(R.string.msg_not_implemented), Toast.LENGTH_SHORT).show();
+                        }
                         break;
                 }
+            } catch (Exception e) {
+                // Catch any potential exceptions to prevent crashes
+                Timber.e(e, "Error in SpecialViewClickedListener");
             }
         }
     }
@@ -437,9 +455,31 @@ public class EnhancedBrowseFragment extends Fragment implements RowLoader, View.
     private final class ItemViewClickedListener implements OnItemViewClickedListener {
         @Override
         public void onItemClicked(final Presenter.ViewHolder itemViewHolder, Object item, RowPresenter.ViewHolder rowViewHolder, Row row) {
-            if (!(item instanceof BaseRowItem)) return;
+            // Check if fragment is still attached to activity
+            if (!isAdded() || getActivity() == null || getActivity().isFinishing() || getActivity().isDestroyed()) {
+                return;
+            }
 
-            itemLauncher.getValue().launch((BaseRowItem) item, (ItemRowAdapter) ((ListRow) row).getAdapter(), requireContext());
+            try {
+                if (!(item instanceof BaseRowItem)) return;
+
+                // Get the context safely
+                Context context = getContext();
+                if (context == null) return;
+
+                // Get the adapter safely
+                if (!(row instanceof ListRow)) return;
+                ItemRowAdapter adapter = (ItemRowAdapter) ((ListRow) row).getAdapter();
+                if (adapter == null) return;
+
+                // Launch the item
+                if (itemLauncher.getValue() != null) {
+                    itemLauncher.getValue().launch((BaseRowItem) item, adapter, context);
+                }
+            } catch (Exception e) {
+                // Catch any potential exceptions to prevent crashes
+                Timber.e(e, "Error in onItemClicked");
+            }
         }
     }
 
@@ -447,36 +487,61 @@ public class EnhancedBrowseFragment extends Fragment implements RowLoader, View.
         @Override
         public void onItemSelected(Presenter.ViewHolder itemViewHolder, Object item,
                                    RowPresenter.ViewHolder rowViewHolder, Row row) {
-            if (!(item instanceof BaseRowItem)) {
-                mTitle.setText(mFolder != null ? mFolder.getName() : "");
-                mInfoRow.removeAllViews();
-                mSummary.setText("");
-                mCurrentItem = null;
-                mCurrentRow = null;
-                // Fill in default background
-                backgroundService.getValue().clearBackgrounds();
+            // Check if fragment is still attached to activity
+            if (!isAdded() || getActivity() == null || getActivity().isFinishing() || getActivity().isDestroyed()) {
                 return;
             }
 
-            BaseRowItem rowItem = (BaseRowItem) item;
+            try {
+                if (!(item instanceof BaseRowItem rowItem)) {
+                    if (mTitle != null) mTitle.setText(mFolder != null ? mFolder.getName() : "");
+                    if (mInfoRow != null) mInfoRow.removeAllViews();
+                    if (mSummary != null) mSummary.setText("");
+                    mCurrentItem = null;
+                    mCurrentRow = null;
+                    // Fill in default background
+                    if (backgroundService.getValue() != null) {
+                        backgroundService.getValue().clearBackgrounds();
+                    }
+                    return;
+                }
 
-            mCurrentItem = rowItem;
-            mCurrentRow = (ListRow) row;
-            mInfoRow.removeAllViews();
 
-            mTitle.setText(rowItem.getName(requireContext()));
+                mCurrentItem = rowItem;
+                mCurrentRow = (ListRow) row;
+                if (mInfoRow != null) mInfoRow.removeAllViews();
 
-            String summary = rowItem.getSummary(requireContext());
-            if (summary != null)
-                mSummary.setText(markdownRenderer.getValue().toMarkdownSpanned(summary));
-            else mSummary.setText(null);
+                if (mTitle != null) {
+                    mTitle.setText(rowItem.getName(requireContext()));
+                }
 
-            InfoLayoutHelper.addInfoRow(requireContext(), rowItem.getBaseItem(), mInfoRow, true);
+                if (mSummary != null) {
+                    String summary = rowItem.getSummary(requireContext());
+                    if (summary != null) {
+                        mSummary.setText(markdownRenderer.getValue().toMarkdownSpanned(summary));
+                    } else {
+                        mSummary.setText(null);
+                    }
+                }
 
-            ItemRowAdapter adapter = (ItemRowAdapter) ((ListRow) row).getAdapter();
-            adapter.loadMoreItemsIfNeeded(adapter.indexOf(rowItem));
+                if (mInfoRow != null && getContext() != null) {
+                    InfoLayoutHelper.addInfoRow(requireContext(), rowItem.getBaseItem(), mInfoRow, true, false);
+                }
 
-            backgroundService.getValue().setBackground(rowItem.getBaseItem());
+                if (row != null) {
+                    ItemRowAdapter adapter = (ItemRowAdapter) ((ListRow) row).getAdapter();
+                    if (adapter != null) {
+                        adapter.loadMoreItemsIfNeeded(adapter.indexOf(rowItem));
+                    }
+                }
+
+                if (backgroundService.getValue() != null) {
+                    backgroundService.getValue().setBackground(rowItem.getBaseItem());
+                }
+            } catch (Exception e) {
+                // Catch any potential exceptions to prevent crashes
+                Timber.e(e, "Error in onItemSelected");
+            }
         }
     }
 }
