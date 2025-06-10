@@ -13,6 +13,7 @@ import androidx.media3.common.Player
 import androidx.media3.common.TrackSelectionParameters
 import androidx.media3.common.VideoSize
 import androidx.media3.common.text.CueGroup
+import androidx.media3.common.C.TRACK_TYPE_TEXT
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.exoplayer.DefaultRenderersFactory
@@ -67,6 +68,17 @@ class ExoPlayerBackend(
 			})
 			.setTrackSelector(DefaultTrackSelector(context).apply {
 				setParameters(buildUponParameters().apply {
+					setPreferredTextLanguage("en") // or user's preferred language
+					setTrackTypeDisabled(TRACK_TYPE_TEXT, false)
+					setAudioOffloadPreferences(
+						TrackSelectionParameters.AudioOffloadPreferences.DEFAULT.buildUpon().apply {
+							setAudioOffloadMode(TrackSelectionParameters.AudioOffloadPreferences.AUDIO_OFFLOAD_MODE_ENABLED)
+						}.build()
+					)
+				})
+			})
+			.setTrackSelector(DefaultTrackSelector(context).apply {
+				setParameters(buildUponParameters().apply {
 					setAudioOffloadPreferences(
 						TrackSelectionParameters.AudioOffloadPreferences.DEFAULT.buildUpon().apply {
 							setAudioOffloadMode(TrackSelectionParameters.AudioOffloadPreferences.AUDIO_OFFLOAD_MODE_ENABLED)
@@ -116,7 +128,30 @@ class ExoPlayerBackend(
 		}
 
 		override fun onPlayerError(error: PlaybackException) {
+			// Clear any stuck subtitles on error
+			subtitleView?.setCues(emptyList())
 			listener?.onPlayStateChange(PlayState.ERROR)
+		}
+		
+		override fun onPositionDiscontinuity(
+			oldPosition: Player.PositionInfo,
+			newPosition: Player.PositionInfo,
+			reason: Int
+		) {
+			if (reason == Player.DISCONTINUITY_REASON_SEEK || 
+				reason == Player.DISCONTINUITY_REASON_SEEK_ADJUSTMENT) {
+				// Clear current cues to force reload and ensure sync
+				subtitleView?.setCues(emptyList())
+				subtitleView?.invalidate()
+			}
+		}
+		
+		override fun onPositionDiscontinuity(reason: Int) {
+			if (reason == Player.DISCONTINUITY_REASON_SEEK || 
+				reason == Player.DISCONTINUITY_REASON_SEEK_ADJUSTMENT) {
+				// Force update subtitle view
+				subtitleView?.invalidate()
+			}
 		}
 
 		override fun onVideoSizeChanged(size: VideoSize) {
@@ -220,7 +255,12 @@ class ExoPlayerBackend(
 			Timber.w("Trying to seek but ExoPlayer doesn't support it for the current item")
 		}
 
+		// Clear any active subtitles before seeking
+		subtitleView?.setCues(emptyList())
 		exoPlayer.seekTo(position.inWholeMilliseconds)
+		
+		// Force update the subtitle view after seek
+		subtitleView?.invalidate()
 	}
 
 	override fun setSpeed(speed: Float) {
