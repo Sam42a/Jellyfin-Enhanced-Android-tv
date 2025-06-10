@@ -1,5 +1,8 @@
+@file:Suppress("DEPRECATION")
+
 package org.jellyfin.androidtv.ui.card
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
@@ -36,7 +39,7 @@ class DefaultCardView @JvmOverloads constructor(
 
     val binding = ViewCardDefaultBinding.inflate(LayoutInflater.from(context), this, true)
 
-    fun setSize(size: Size) = when (size) {
+	fun setSize(size: Size) = when (size) {
         Size.SQUARE -> setSize(size.width, size.height)
         Size.SQUARE_SMALL -> setSize(size.width, size.height)
     }
@@ -80,10 +83,11 @@ class DefaultCardView @JvmOverloads constructor(
     private var currentScale: Float = 0.95f
     private var isFocused: Boolean = false
 
-    private fun updateWhiteBorder(hasFocus: Boolean) {
+    @SuppressLint("UseCompatLoadingForDrawables")
+	private fun updateWhiteBorder(hasFocus: Boolean) {
         val prefs = UserPreferences(context)
         val showWhiteBorders = prefs[UserPreferences.showWhiteBorders]
-        
+
         if (hasFocus && showWhiteBorders) {
             if (foreground == null) {
                 foreground = context.getDrawable(R.drawable.card_focused_border)
@@ -95,14 +99,14 @@ class DefaultCardView @JvmOverloads constructor(
 
     override fun onFocusChanged(gainFocus: Boolean, direction: Int, previouslyFocusedRect: Rect?) {
         super.onFocusChanged(gainFocus, direction, previouslyFocusedRect)
-        
+
         // Skip if focus state hasn't changed
         if (isFocused == gainFocus) return
         isFocused = gainFocus
-        
+
         // Cancel any ongoing animations
         animate().cancel()
-        
+
         // Update scale
         val targetScale = if (gainFocus) 1.0f else 0.95f
         if (currentScale != targetScale) {
@@ -110,11 +114,11 @@ class DefaultCardView @JvmOverloads constructor(
             scaleX = targetScale
             scaleY = targetScale
         }
-        
+
         // Update white border
         updateWhiteBorder(gainFocus)
     }
-    
+
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     fun onResume() {
         // Update border state when preferences might have changed

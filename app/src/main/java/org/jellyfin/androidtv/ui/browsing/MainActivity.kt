@@ -28,6 +28,7 @@ import org.jellyfin.androidtv.ui.ScreensaverViewModel
 import org.jellyfin.androidtv.ui.background.AppBackground
 import org.jellyfin.androidtv.ui.browsing.DestinationFragmentView
 import org.jellyfin.androidtv.ui.home.HomeFragment
+import org.jellyfin.androidtv.ui.navigation.Destinations
 import org.jellyfin.androidtv.ui.navigation.NavigationAction
 import org.jellyfin.androidtv.ui.navigation.NavigationRepository
 import org.jellyfin.androidtv.ui.screensaver.InAppScreensaver
@@ -57,33 +58,52 @@ class MainActivity : FragmentActivity() {
 	}
 
 	override fun onCreate(savedInstanceState: Bundle?) {
+		// Apply theme before super to ensure proper theme setup
+		super.onCreate(savedInstanceState)
 		applyTheme()
 
-		super.onCreate(savedInstanceState)
+		binding = ActivityMainBinding.inflate(layoutInflater)
+		setContentView(binding.root)
 
 		if (!validateAuthentication()) return
 
+		// Initialize background and screensaver
+		binding.background.setContent { AppBackground() }
+		binding.screensaver.setContent { InAppScreensaver() }
+
+		// Set up screen keep-on
 		screensaverViewModel.keepScreenOn.flowWithLifecycle(lifecycle, Lifecycle.State.RESUMED)
 			.onEach { keepScreenOn ->
 				if (keepScreenOn) window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 				else window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 			}.launchIn(lifecycleScope)
 
+		// Set up back press handling
 		onBackPressedDispatcher.addCallback(this, backPressedCallback)
-		if (savedInstanceState == null && navigationRepository.canGoBack) navigationRepository.reset(clearHistory = true)
 
+		// Initialize navigation
+		if (savedInstanceState == null) {
+			if (navigationRepository.canGoBack) {
+				navigationRepository.reset(clearHistory = true)
+			} else {
+				// If no saved state and no back stack, navigate to home
+				navigationRepository.navigate(Destinations.home, true)
+			}
+		} else if (!navigationRepository.canGoBack) {
+			// If we're being restored but have no back stack, ensure we're at home
+			navigationRepository.reset(Destinations.home, true)
+		}
+
+		// Observe navigation actions
 		navigationRepository.currentAction
 			.flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
 			.onEach { action ->
-				handleNavigationAction(action)
-				backPressedCallback.isEnabled = navigationRepository.canGoBack
-				screensaverViewModel.notifyInteraction(false)
+				if (action != null) {
+					handleNavigationAction(action)
+					backPressedCallback.isEnabled = navigationRepository.canGoBack
+					screensaverViewModel.notifyInteraction(false)
+				}
 			}.launchIn(lifecycleScope)
-
-		binding = ActivityMainBinding.inflate(layoutInflater)
-		binding.background.setContent { AppBackground() }
-		binding.screensaver.setContent { InAppScreensaver() }
-		setContentView(binding.root)
 	}
 
 	override fun onResume() {
@@ -91,7 +111,10 @@ class MainActivity : FragmentActivity() {
 
 		if (!validateAuthentication()) return
 
-		applyTheme()
+		// Only apply theme if we're not in the middle of a configuration change
+		if (!isChangingConfigurations) {
+			applyTheme()
+		}
 
 		screensaverViewModel.activityPaused = false
 	}
@@ -107,31 +130,31 @@ class MainActivity : FragmentActivity() {
 		return true
 	}
 
-	override fun onPause() {
-		super.onPause()
-
-		screensaverViewModel.activityPaused = true
-	}
-
-	override fun onStop() {
-		super.onStop()
-
-		workManager.enqueue(OneTimeWorkRequestBuilder<LeanbackChannelWorker>().build())
-
-		lifecycleScope.launch(Dispatchers.IO) {
-			Timber.d("MainActivity stopped")
-			sessionRepository.restoreSession(destroyOnly = true)
-		}
-	}
-
 	private fun handleNavigationAction(action: NavigationAction) {
-		screensaverViewModel.notifyInteraction(true)
+		if (isDestroyed || isFinishing) return
 
-		when (action) {
-			is NavigationAction.NavigateFragment -> binding.contentView.navigate(action)
-			NavigationAction.GoBack -> binding.contentView.goBack()
+		try {
+			screensaverViewModel.notifyInteraction(true)
 
-			NavigationAction.Nothing -> Unit
+			when (action) {
+				is NavigationAction.NavigateFragment -> {
+					if (!isDestroyed && !isFinishing) {
+						Timber.d("Navigating to fragment: ${action.destination.fragment}")
+						binding.contentView.navigate(action)
+					}
+				}
+				NavigationAction.GoBack -> {
+					if (!isDestroyed && !isFinishing) {
+						Timber.d("Going back in fragment stack")
+						binding.contentView.goBack()
+					}
+				}
+				NavigationAction.Nothing -> {
+					Timber.d("Received NavigationAction.Nothing")
+				}
+			}
+		} catch (e: Exception) {
+			Timber.e(e, "Error handling navigation action")
 		}
 	}
 

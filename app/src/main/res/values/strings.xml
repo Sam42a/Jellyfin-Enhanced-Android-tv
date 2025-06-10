@@ -39,6 +39,10 @@
     <string name="show_suggested_tv_shows_row">Show Suggested TV Shows row</string>
 <string name="lbl_suggested_tv_shows">Suggested TV Shows</string>
     <string name="lbl_search">Search</string>
+    <string name="lbl_search_hint">Search for movies, shows, and more...</string>
+    <string name="voice_search_not_available">Voice search not available</string>
+    <string name="error_occurred">An error occurred. Please try again.</string>
+    <string name="no_results_found">No results found</string>
     <string name="lbl_library">Refresh</string>
     <string name="lbl_voice_search">Voice Search</string>
     <string name="msg_not_implemented">" not implemented"</string>
@@ -116,7 +120,7 @@
     <string name="lbl_no_items">No items</string>
     <string name="lbl_empty">Empty</string>
     <string name="lbl_tv_queuing">Play next episode automatically</string>
-    <string name="lbl_search_hint">Search text (select for keyboard)</string>
+    <string name="lbl_playing">Playing</string>
     <string name="lbl_play_first_unwatched">Play first unwatched</string>
     <string name="lbl_mark_unplayed">Mark unplayed</string>
     <string name="lbl_mark_played">Mark played</string>
@@ -151,7 +155,7 @@
     <string name="lbl_enable_debug">Debug options</string>
     <string name="desc_debug">Provide extra information for debugging</string>
     <string name="lbl_showing">Showing</string>
-    <string name="genre_rows">Genre Rows</string>
+    <string name="genre_rows">Genre Rows (enable 5 or less for low end devices)</string>
     <string name="lbl_all_items">All items</string>
     <string name="lbl_sorted_by">sorted by</string>
     <string name="lbl_from">from</string>
@@ -161,6 +165,7 @@
     <string name="lbl_critic_rating">Critic rating</string>
     <string name="lbl_community_rating">Community rating</string>
     <string name="lbl_rating">Rating</string>
+    <string name="lbl_random">Random</string>
     <string name="lbl_starting_with">beginning with those whose name starts with</string>
     <string name="lbl_display_preferences">Display preferences</string>
     <string name="lbl__continuing"> CONTINUING </string>
@@ -279,10 +284,11 @@
     <string name="lbl_my_media_small">My Media (Small)</string>
     <string name="lbl_my_media_extra_small">Media Folders</string>
     <string name="desc_my_media_extra_small">Display media folders as simple buttons without images</string>
-    <string name="pref_theme_purple_haze">Purple Haze</string>
-    <string name="pref_theme_dark">Dark</string>
-    <string name="pref_theme_emerald">Emerald</string>
-    <string name="pref_theme_muted_purple">Muted Purple</string>
+    <string name="pref_theme_purple_haze">Lavender Haze</string>
+    <string name="pref_theme_dark">Dark Matter (Restart required)</string>
+    <string name="pref_theme_emerald">Green forest</string>
+    <string name="pref_theme_muted_purple">Light Breeze</string>
+    <string name="pref_theme_basic">Basic (Dark Low-End)</string>
     <string name="pref_about_title">About</string>
     <string name="pref_external_player">Use external player</string>
     <string name="pref_next_up_timeout_summary">How long to wait before playing the next item</string>
@@ -298,7 +304,7 @@
     <string name="lbl_unknown_key">Unknown (%1s)</string>
     <string name="pref_audio_track_button">Audio track button</string>
     <string name="pref_subtitle_track_button">Subtitle Track</string>
-    
+
     <!-- Subtitle Weight Preference -->
     <string name="pref_subtitle_weight">Subtitle Weight</string>
     <string name="pref_subtitle_weight_description">Choose the font weight for subtitles</string>
@@ -389,7 +395,7 @@
     <string name="discovered_servers_empty">No servers found on local network.</string>
     <string name="connect_manually_by_address">Enter server address</string>
     <string name="login_help_title">Need help?</string>
-    <string name="login_help_description">Jellyfin requires a server to connect with. Visit our documentation at docs.jellyfin.org or scan the QR code to get started with Jellyfin.</string>
+    <string name="login_help_description">Dune requires a server to connect with. Visit the documentation at docs.jellyfin.org or scan the QR code to get started.</string>
     <string name="pref_watched_indicator">Show watched indicators</string>
     <string name="lbl_hide_unwatched_count">When the item is watched</string>
     <string name="lbl_hide_watched_checkmark">When there are episodes remaining</string>
@@ -401,10 +407,10 @@
     <string name="user_picker_last_user_title">Most recently used</string>
     <string name="user_picker_last_user_summary">Use the last active account</string>
     <string name="lbl_switch_user">Users</string>
-    <string name="no_network_permissions">Jellyfin requires network permissions to function</string>
+    <string name="no_network_permissions">Dune requires network permissions to function</string>
     <string name="press_to_close">Press to close</string>
     <string name="saved_servers">Saved servers</string>
-    <string name="welcome_title">Welcome to Jellyfin!</string>
+    <string name="welcome_title">Welcome to Dune!</string>
     <string name="welcome_content">Connect to your server to get started.</string>
     <string name="no_user_warning">We couldn\'t find any accounts!\nAdd a new account by pressing the \"Add account\" button.</string>
     <string name="who_is_watching">Who\'s watching?</string>
@@ -434,7 +440,7 @@
     <string name="advanced_settings">Advanced</string>
     <string name="select_version">Version</string>
     <string name="licenses_link">Licenses</string>
-    <string name="licenses_link_description">View the licenses of the libraries used by the Jellyfin app</string>
+    <string name="licenses_link_description"></string>
     <string name="license_description">Description</string>
     <string name="license_version">Version</string>
     <string name="license_artifact">Artifact</string>
@@ -455,7 +461,7 @@
     <string name="home_section_livetv">Live TV</string>
     <string name="home_section_none">None</string>
     <string name="home_section_i">Home section %1$d</string>
-    <string name="searchable_hint">Search Jellyfin</string>
+    <string name="searchable_hint">Search Dune</string>
     <string name="searchable_settings_description">Media</string>
     <string name="pref_subtitles_background_title">Enable background</string>
     <string name="pref_subtitles_background_summary">Show a black background behind the subtitles</string>
@@ -502,9 +508,9 @@
     <string name="input_password">Password</string>
     <string name="login_connect_to">Connecting to %1$s</string>
     <string name="login_other_options">Other options:</string>
-    <string name="login_quickconnect_step_1">1. Open the Jellyfin app on your phone or webbrowser, and sign in with your account</string>
-    <string name="login_quickconnect_step_2">2. Open the user menu and go to the Quick Connect page</string>
-    <string name="login_quickconnect_step_3">3. Enter the following code:</string>
+    <string name="login_quickconnect_step_1">1.Open the Jellyfin app on your phone or webbrowser</string>
+    <string name="login_quickconnect_step_2">2.Open the user menu and go to the Quick Connect page</string>
+    <string name="login_quickconnect_step_3">3.Enter the following code:</string>
     <string name="lbl_refresh_switching">Refresh rate switching</string>
     <string name="pref_refresh_rate_scale_on_tv">Scale on TV</string>
     <string name="pref_refresh_rate_scale_on_device">Scale on device</string>
@@ -532,7 +538,7 @@
     <string name="item_delete_confirm_message">Are you sure you want to delete this item from the server? This action cannot be undone.</string>
     <string name="pref_screensaver">Screensaver</string>
     <string name="pref_screensaver_inapp_enabled">Use in-app screensaver</string>
-    <string name="pref_screensaver_inapp_enabled_description">Show the Jellyfin screensaver while the app is open</string>
+    <string name="pref_screensaver_inapp_enabled_description">Show The screensaver while the app is open</string>
     <string name="pref_screensaver_inapp_timeout">Start screensaver after</string>
     <string name="enable_reactive_homepage">Enable reactive homepage</string>
     <string name="not_set">Not set</string>
@@ -656,7 +662,7 @@
     <string name="show_family_row">Show Family Row</string>
     <string name="show_horror_row">Show Horror Row</string>
     <string name="show_fantasy_row">Show Fantasy Row</string>
-    
+
     <!-- Exit confirmation dialog -->
     <string name="exit_app_title">Exit DUNE</string>
     <string name="exit_app_message">Are you sure you want to exit?</string>
@@ -668,7 +674,7 @@
     <string name="show_reality_row">Show Reality Row</string>
     <string name="show_thriller_row">Show Thriller Row</string>
     <string name="show_war_row">Show War Row</string>
-    
+
     <!-- Live TV Button -->
     <string name="show_live_tv_button">Live TV Button</string>
     <string name="show_live_tv_button_summary">Display the Live TV button in the top toolbar</string>

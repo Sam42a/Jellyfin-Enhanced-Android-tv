@@ -26,7 +26,7 @@ enum class AppTheme(
 	MUTED_PURPLE(R.string.pref_theme_muted_purple),
 
 	/**
-
+	 * A minimal theme optimized for low-end devices with basic colors and reduced animations
 	 */
-
+	BASIC(R.string.pref_theme_basic)
 }

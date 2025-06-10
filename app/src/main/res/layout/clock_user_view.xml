@@ -17,10 +17,6 @@
         android:contentDescription="@string/lbl_home"
         android:src="@drawable/ic_house" />
 
-    <Space
-        android:layout_width="wrap_content"
-        android:layout_height="0dp" />
-
     <ImageButton
         android:id="@+id/live_tv"
         style="@style/Button.Icon"
@@ -28,7 +24,12 @@
         android:layout_height="48dp"
         android:contentDescription="@string/lbl_live_tv"
         android:src="@drawable/ic_tv"
+        android:visibility="gone"
         app:tint="@color/button_text" />
+
+    <Space
+        android:layout_width="wrap_content"
+        android:layout_height="0dp" />
 
     <Space
         android:layout_width="wrap_content"
@@ -36,9 +37,9 @@
 
     <org.jellyfin.androidtv.ui.AsyncImageView
         android:id="@+id/clock_user_image"
-        android:layout_width="41dp"
-        android:layout_height="41dp"
-        android:padding="4dp"
+        android:layout_width="wrap_content"
+        android:layout_height="34dp"
+        android:padding="3dp"
         app:circleCrop="true"
         tools:src="@drawable/ic_user" />
 
@@ -53,7 +54,7 @@
         android:shadowColor="@color/black"
         android:shadowRadius="4"
         android:textColor="@color/white"
-        android:textSize="20sp"
+        android:textSize="15sp"
         tools:ignore="RtlSymmetry"
         tools:text="13:37" />
 

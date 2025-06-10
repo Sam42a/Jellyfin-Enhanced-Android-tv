@@ -24,6 +24,7 @@
         android:gravity="start"
         android:background="@drawable/card_background_selector"
         android:clipToOutline="true"
+        android:clipChildren="true"
         android:visibility="gone"
         tools:ignore="UnusedAttribute"
         tools:visibility="visible">
@@ -36,6 +37,8 @@
             android:background="@null"
             android:contentDescription="@null"
             android:scaleType="centerCrop"
+            android:clipToOutline="true"
+            android:elevation="0dp"
             app:crossfadeDuration="0"
             lb:layout_viewType="main"
             tools:src="@drawable/app_logo" />

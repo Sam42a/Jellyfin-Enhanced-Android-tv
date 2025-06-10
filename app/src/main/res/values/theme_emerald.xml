@@ -1,48 +1,131 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+    <!-- Keep original colors for backward compatibility -->
     <color name="theme_emerald_light">#52B54B</color>
     <color name="theme_emerald_dark">#051802</color>
     <color name="theme_emerald_black">#000000</color>
 
     <style name="Theme.Jellyfin.Emerald" parent="Theme.Jellyfin">
-        <item name="android:colorPrimary">@color/theme_emerald_dark</item>
-        <item name="android:colorPrimaryDark">@color/theme_emerald_dark</item>
-        <item name="android:colorAccent">@color/theme_emerald_light</item>
-        <item name="defaultBackground">@drawable/moviebg</item>
-        <item name="defaultSearchColor">@color/theme_emerald_light</item>
-        <item name="progressPrimary">@color/theme_emerald_light</item>
-        <item name="progressSecondary">@color/theme_emerald_dark</item>
-        <item name="popupMenuBackground">@color/theme_emerald_black</item>
+        <!-- Base colors -->
+        <item name="colorPrimary">@color/emerald_primary</item>
+        <item name="colorPrimaryDark">@color/emerald_status_bar</item>
+        <item name="colorAccent">@color/emerald_accent</item>
+        <item name="colorSecondary">@color/emerald_secondary</item>
+        <item name="android:colorPrimary">@color/emerald_primary</item>
+        <item name="android:colorPrimaryDark">@color/emerald_status_bar</item>
+        <item name="android:colorAccent">@color/emerald_accent</item>
 
-        <!-- Control icons -->
-        <item name="controlIconBackground">@color/theme_emerald_black</item>
-        <item name="controlIconForegroundActive">@color/theme_emerald_light</item>
-        <item name="controlIconForegroundInactive">@color/theme_emerald_dark</item>
+        <!-- Background and window -->
+        <item name="android:windowBackground">@color/emerald_primary_dark</item>
+        <item name="android:statusBarColor">@color/emerald_status_bar</item>
+        <item name="android:navigationBarColor">@color/emerald_nav_bar</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowAnimationStyle">@style/WindowAnimation</item>
+        <item name="android:windowDisablePreview">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:activityOpenEnterAnimation">@null</item>
+        <item name="android:activityOpenExitAnimation">@null</item>
+        <item name="android:activityCloseEnterAnimation">@null</item>
+        <item name="android:activityCloseExitAnimation">@null</item>
+        <item name="android:windowEnterAnimation">@null</item>
+        <item name="android:windowExitAnimation">@null</item>
 
-        <!-- QR drawables -->
-        <item name="qrForeground">@color/theme_emerald_dark</item>
+        <!-- Card and UI elements -->
+        <item name="cardBackground">@color/emerald_card</item>
+        <item name="cardViewBackground">@color/transparent</item>
+        <item name="cardImageBackground">@color/transparent</item>
+        <item name="cardRounding">4dp</item>
 
-        <!-- Tile colors -->
-        <item name="tile_search_bg">@color/theme_emerald_light</item>
-        <item name="tile_suggestions_bg">@color/theme_emerald_light</item>
-        <item name="tile_actors_bg">@color/theme_emerald_light</item>
-        <item name="tile_artists_bg">@color/theme_emerald_light</item>
-        <item name="tile_audio_bg">@color/theme_emerald_light</item>
-        <item name="tile_chapter_bg">@color/theme_emerald_light</item>
-        <item name="tile_genres_bg">@color/theme_emerald_light</item>
-        <item name="tile_letters_bg">@color/theme_emerald_light</item>
-        <item name="tile_land_folder_bg">@color/theme_emerald_light</item>
-        <item name="tile_land_photo_bg">@color/theme_emerald_light</item>
-        <item name="tile_land_series_timer_bg">@color/theme_emerald_light</item>
-        <item name="tile_land_tv_bg">@color/theme_emerald_light</item>
-        <item name="tile_port_time_bg">@color/theme_emerald_light</item>
-        <item name="tile_port_tv_bg">@color/theme_emerald_light</item>
-        <item name="tile_port_video_bg">@color/theme_emerald_light</item>
-        <item name="tile_port_folder_bg">@color/theme_emerald_light</item>
-        <item name="tile_port_grid_bg">@color/theme_emerald_light</item>
-        <item name="tile_port_guide_bg">@color/theme_emerald_light</item>
-        <item name="tile_port_person_bg">@color/theme_emerald_light</item>
-        <item name="tile_port_series_timer_bg">@color/theme_emerald_light</item>
+        <!-- Text colors -->
+        <item name="textColorPrimary">@color/emerald_text_primary</item>
+        <item name="textColorSecondary">@color/emerald_text_secondary</item>
+        <item name="headerTextColor">@color/emerald_text_primary</item>
+        <item name="defaultSearchColor">@color/emerald_text_primary</item>
+
+        <!-- Buttons -->
+        <item name="buttonBackground">@color/emerald_button_normal</item>
+        <item name="buttonTextColor">@color/emerald_text_primary</item>
+        <item name="android:colorButtonNormal">@color/emerald_button_normal</item>
+        <item name="buttonDefaultNormalBackground">@color/emerald_button_normal</item>
+        <item name="buttonDefaultHighlightBackground">@color/emerald_button_highlight</item>
+        <item name="buttonRounding">3dp</item>
+
+        <!-- Input fields -->
+        <item name="inputDefaultStrokeWidth">2dp</item>
+        <item name="inputDefaultStrokeColor">@color/emerald_accent</item>
+        <item name="inputDefaultHighlightBackground">@color/emerald_highlight</item>
+        <item name="inputRounding">3dp</item>
+
+        <!-- Surfaces -->
+        <item name="surfaceColor">@color/emerald_surface</item>
+        <item name="onSurfaceColor">@color/emerald_text_primary</item>
+        <item name="popupMenuBackground">@color/emerald_surface</item>
+        <item name="popupMenuRounding">3dp</item>
+
+        <!-- Progress bars -->
+        <item name="progressBackground">@color/emerald_progress_bg</item>
+        <item name="progressPrimary">@color/emerald_progress_fill</item>
+        <item name="progressSecondary">@color/emerald_highlight</item>
+
+        <!-- Icons -->
+        <item name="controlIconBackground">@color/emerald_button_normal</item>
+        <item name="controlIconForegroundActive">@color/emerald_accent</item>
+        <item name="controlIconForegroundInactive">@color/emerald_text_secondary</item>
+
+        <!-- QR Code -->
+        <item name="qrBackground">@color/white</item>
+        <item name="qrForeground">@color/emerald_primary</item>
+
+        <!-- Tile backgrounds -->
+        <item name="tile_port_person_bg">@color/emerald_card</item>
+        <item name="tile_user_bg">@color/emerald_card</item>
+        <item name="tile_port_video_bg">@color/emerald_card</item>
+        <item name="tile_land_folder_bg">@color/emerald_card</item>
+        <item name="tile_chapter_bg">@color/emerald_card</item>
+        <item name="tile_land_tv_bg">@color/emerald_card</item>
+        <item name="tile_port_tv_bg">@color/emerald_card</item>
+        <item name="tile_actors_bg">@color/emerald_card</item>
+        <item name="tile_land_photo_bg">@color/emerald_card</item>
+        <item name="tile_port_folder_bg">@color/emerald_card</item>
+        <item name="tile_land_series_timer_bg">@color/emerald_card</item>
+        <item name="tile_audio_bg">@color/emerald_card</item>
+        <item name="tile_artists_bg">@color/emerald_card</item>
+        <item name="tile_genres_bg">@color/emerald_card</item>
+        <item name="tile_search_bg">@color/emerald_card</item>
+        <item name="tile_suggestions_bg">@color/emerald_card</item>
+        <item name="tile_port_grid_bg">@color/emerald_card</item>
+        <item name="tile_letters_bg">@color/emerald_card</item>
+        <item name="tile_port_guide_bg">@color/emerald_card</item>
+        <item name="tile_port_series_timer_bg">@color/emerald_card</item>
+
+        <!-- Media Folders Buttons -->
+        <item name="mediaFolderButtonFocusedBackground">@color/emerald_button_highlight</item>
+        <item name="mediaFolderButtonTextColor">@color/emerald_text_primary</item>
+        <item name="mediaFolderButtonFocusedTextColor">@color/emerald_text_primary</item>
+        <item name="tile_port_time_bg">@color/emerald_card</item>
+
+        <!-- Other -->
+        <item name="overlayDimDimmedLevel">30%</item>
+        <item name="cardBorderDrawable">@drawable/emerald_card_border</item>
+
+        <!-- Backdrop Dimming -->
+        <item name="background_filter">@color/black</item>
+        <!-- Backdrop Fading Color -->
+        <item name="backdrop_fading_color">@color/emerald_highlight</item>
+        <item name="browseTitleViewLayout">@layout/view_lb_browse_title</item>
+        <item name="preferenceTheme">@style/PreferenceThemeOverlayLeanback</item>
+        <item name="android:popupMenuStyle">@style/PopupMenu</item>
+        <item name="android:popupWindowStyle">@style/PopupWindow</item>
+        <item name="android:datePickerStyle">@style/DatePickerCustom</item>
+        <item name="rowHeaderStyle">@style/Widget.Jellyfin.Row.Header</item>
+    </style>
+
+    <!-- Preferences theme -->
+    <style name="Theme.Jellyfin.Emerald.Preferences" parent="Theme.Jellyfin.Preferences">
+        <item name="colorPrimary">@color/emerald_primary</item>
+        <item name="colorPrimaryDark">@color/emerald_status_bar</item>
+        <item name="colorAccent">@color/emerald_accent</item>
+        <item name="android:windowBackground">@color/emerald_primary</item>
     </style>
 </resources>

@@ -3,16 +3,16 @@
     <item android:state_focused="true">
         <objectAnimator
             android:propertyName="cardElevation"
-            android:duration="0"
-            android:valueTo="0"
+            android:duration="200"
+            android:valueTo="1"
             android:valueType="floatType"
             android:interpolator="@android:interpolator/linear" />
     </item>
     <item>
         <objectAnimator
             android:propertyName="cardElevation"
-            android:duration="0"
-            android:valueTo="0"
+            android:duration="200"
+            android:valueTo="1"
             android:valueType="floatType"
             android:interpolator="@android:interpolator/linear" />
     </item>

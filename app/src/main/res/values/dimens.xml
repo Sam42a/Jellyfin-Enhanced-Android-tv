@@ -1,4 +1,7 @@
 <resources>
+    <!-- Profile focus border -->
+    <dimen name="profile_focus_border_width">2dp</dimen>
+
     <dimen name="overscan_horizontal">27dp</dimen>
     <dimen name="overscan_vertical">48dp</dimen>
 
@@ -10,6 +13,10 @@
     <fraction name="lb_focus_zoom_factor_xsmall">@fraction/card_scale_focus</fraction>
     <fraction name="lb_focus_zoom_factor_medium">@fraction/card_scale_focus</fraction>
     <fraction name="lb_focus_zoom_factor_large">@fraction/card_scale_focus</fraction>
+
+    <!-- Card corner radius -->
+    <dimen name="card_corner_radius">5dp</dimen>
+    <dimen name="card_border_padding">2dp</dimen>
 
     <!-- Custom row spacing -->
     <dimen name="home_row_spacing">24dp</dimen>

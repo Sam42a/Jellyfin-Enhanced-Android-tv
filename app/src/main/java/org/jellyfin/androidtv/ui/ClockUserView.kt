@@ -8,7 +8,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import org.jellyfin.androidtv.R
 import org.jellyfin.androidtv.auth.repository.UserRepository
-import org.jellyfin.androidtv.databinding.ClockUserBugBinding
+import org.jellyfin.androidtv.databinding.ClockUserViewBinding
 import org.jellyfin.androidtv.preference.UserPreferences
 import org.jellyfin.androidtv.preference.constant.ClockBehavior
 import org.jellyfin.androidtv.ui.navigation.Destinations
@@ -27,7 +27,7 @@ class ClockUserView @JvmOverloads constructor(
 	defStyleAttr: Int = 0,
 	defStyleRes: Int = 0,
 ) : RelativeLayout(context, attrs, defStyleAttr, defStyleRes), KoinComponent {
-	private val binding: ClockUserBugBinding = ClockUserBugBinding.inflate(LayoutInflater.from(context), this, true)
+	private val binding: ClockUserViewBinding = ClockUserViewBinding.inflate(LayoutInflater.from(context), this, true)
 	private val userPreferences by inject<UserPreferences>()
 	private val userRepository by inject<UserRepository>()
 	private val navigationRepository by inject<NavigationRepository>()

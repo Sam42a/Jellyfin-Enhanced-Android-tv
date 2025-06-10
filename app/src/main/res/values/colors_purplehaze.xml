@@ -2,14 +2,28 @@
     <!-- Deep Blue and Deep Purple Theme -->
     <color name="purplehaze_primary">#283593</color> <!-- Deeper Blue -->
     <color name="purplehaze_primary_dark">#1A237E</color> <!-- Dark Blue -->
-    <color name="purplehaze_accent">#4527A0</color> <!-- Deep Purple -->
+    <color name="purplehaze_accent">#7c5fb7</color> <!-- Deep Purple -->
     <color name="purplehaze_secondary">#311B92</color> <!-- Dark Purple -->
     <color name="purplehaze_background">#1A237E</color> <!-- Deep Blue Background -->
     <color name="purplehaze_card">#2C3E8C</color> <!-- Card: Deep Blue -->
     <color name="purplehaze_text_primary">#FFFFFF</color>
     <color name="purplehaze_text_secondary">#9FA8DA</color> <!-- Muted Blue-Purple Text -->
+
+    <!-- Button Colors -->
     <color name="purplehaze_button">#311B92</color> <!-- Button: Deep Purple -->
     <color name="purplehaze_button_text">#FFFFFF</color>
+    <color name="purplehaze_button_normal">#1A237E</color> <!-- Dark Blue -->
+    <color name="purplehaze_button_highlight">#4527A0</color> <!-- Deep Purple -->
+
+    <!-- Surface & Background -->
     <color name="purplehaze_surface">#1C2331</color> <!-- Surface: Deep Blue -->
     <color name="purplehaze_on_surface">#FFFFFF</color>
+    <color name="purplehaze_tile_bg">#2C3E8C</color> <!-- Same as card background -->
+
+    <!-- Input & Progress -->
+    <color name="purplehaze_input_highlight">#4e0277</color> <!-- Lighter Purple for input highlight -->
+    <color name="purplehaze_progress_bg">#1A1A4A</color> <!-- Dark Blue for progress background -->
+
+    <!-- Backdrop Filter -->
+    <color name="purplehaze_background_filter">#1f0357</color> <!-- Vibrant Purple backdrop filter -->
 </resources>

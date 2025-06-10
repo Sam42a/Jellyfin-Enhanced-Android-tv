@@ -31,8 +31,8 @@
                 android:layout_height="match_parent"
                 android:duplicateParentState="true"
                 app:cardCornerRadius="1.0dp"
-                app:cardElevation="0dp"
-                app:cardMaxElevation="0dp"
+                app:cardElevation="1dp"
+                app:cardMaxElevation="5dp"
                 app:cardBackgroundColor="@android:color/transparent"
                 android:foreground="@drawable/card_foreground_selector"
                 android:focusable="true"
@@ -44,18 +44,18 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@drawable/card_border">
-                    <FrameLayout
+                    <org.jellyfin.androidtv.ui.AsyncImageView
+                        android:id="@+id/banner"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_margin="3dp">
-                        <org.jellyfin.androidtv.ui.AsyncImageView
-                            android:id="@+id/banner"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:scaleType="centerCrop"
-                            android:background="@drawable/shimmer_placeholder"
-                            tools:src="@drawable/shimmer_placeholder" />
-                    </FrameLayout>
+                        android:scaleType="centerCrop"
+                        android:background="@drawable/shimmer_placeholder"
+                        tools:src="@drawable/shimmer_placeholder"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        android:duplicateParentState="true"
+                        android:clickable="false"
+                        android:contentDescription="@null" />
                 </FrameLayout>
             </androidx.cardview.widget.CardView>
         </FrameLayout>

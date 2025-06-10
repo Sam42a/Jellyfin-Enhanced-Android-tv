@@ -49,6 +49,17 @@
         <item name="qrForeground">@color/black</item>
         <item name="tile_port_person_bg">@color/black_transparent_dark</item>
         <item name="tile_user_bg">@color/black_transparent_dark</item>
+
+        <!-- Media Folders Buttons -->
+        <item name="mediaFolderButtonBackground">@color/transparent</item>
+        <item name="mediaFolderButtonFocusedBackground">@color/white</item>
+        <item name="mediaFolderButtonTextColor">@color/white</item>
+        <item name="mediaFolderButtonFocusedTextColor">@color/black</item>
+
+        <!-- Backdrop Filter -->
+        <item name="background_filter">@color/default_background_filter</item>
+        <!-- Backdrop Fading Color -->
+        <item name="backdrop_fading_color">@color/black</item>
         <item name="tile_port_video_bg">@color/black_transparent_dark</item>
         <item name="tile_land_folder_bg">@color/black_transparent_dark</item>
         <item name="tile_chapter_bg">@color/black_transparent_dark</item>

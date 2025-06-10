@@ -230,9 +230,8 @@
                 android:layout_height="wrap_content"
                 android:adjustViewBounds="true"
                 android:background="@drawable/shape_card"
-                android:rotation="-1"
                 android:scaleType="centerInside"
-                tools:srcCompat="@drawable/app_banner" />
+                tools:srcCompat="@drawable/tv_banner_background" />
 
         </FrameLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>

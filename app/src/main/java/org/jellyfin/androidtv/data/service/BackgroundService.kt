@@ -109,38 +109,12 @@ fun setBackground(baseItem: BaseItemDto?) {
     _fadingIntensity.value = userPreferences[UserPreferences.backdropFadingIntensity]
 
     // Get all backdrop URLs
-    val backdropUrls = mutableSetOf<String>()
-    
-    // For library items that should show their primary image as backdrop
-    val isSupportedType = when (baseItem.type) {
-        org.jellyfin.sdk.model.api.BaseItemKind.USER_VIEW,  // Playlists
-        org.jellyfin.sdk.model.api.BaseItemKind.COLLECTION_FOLDER,  // Collections
-        org.jellyfin.sdk.model.api.BaseItemKind.FOLDER,  // Folders
-        org.jellyfin.sdk.model.api.BaseItemKind.BOX_SET,  // Box Sets
-        org.jellyfin.sdk.model.api.BaseItemKind.MUSIC_ALBUM,  // Music Albums
-        org.jellyfin.sdk.model.api.BaseItemKind.MUSIC_ARTIST,  // Music Artists
-        org.jellyfin.sdk.model.api.BaseItemKind.MUSIC_GENRE,  // Music Genres
-        org.jellyfin.sdk.model.api.BaseItemKind.GENRE,  // Genres
-        org.jellyfin.sdk.model.api.BaseItemKind.STUDIO,  // Studios
-        org.jellyfin.sdk.model.api.BaseItemKind.TV_CHANNEL -> true  // TV Channels
-        else -> false
-    }
-    
-    val isSupportedCollection = when (baseItem.collectionType) {
-        org.jellyfin.sdk.model.api.CollectionType.MOVIES,
-        org.jellyfin.sdk.model.api.CollectionType.TVSHOWS,
-        org.jellyfin.sdk.model.api.CollectionType.MUSIC,
-        org.jellyfin.sdk.model.api.CollectionType.BOOKS,
-        org.jellyfin.sdk.model.api.CollectionType.HOMEVIDEOS,
-        org.jellyfin.sdk.model.api.CollectionType.MUSICVIDEOS,
-        org.jellyfin.sdk.model.api.CollectionType.LIVETV,
-        org.jellyfin.sdk.model.api.CollectionType.PLAYLISTS,
-        org.jellyfin.sdk.model.api.CollectionType.FOLDERS -> true
-        else -> false
-    }
-    
-    if (isSupportedType || (baseItem.collectionType != null && isSupportedCollection)) {
-        // Use ImageHelper to get the primary image URL
+    val backdropUrls = (baseItem.itemBackdropImages + baseItem.parentBackdropImages)
+        .map { it.getUrl(api) }
+        .toMutableSet()
+        
+    // If no backdrops are available, use the primary image as fallback
+    if (backdropUrls.isEmpty()) {
         val imageHelper = ImageHelper(api)
         val primaryImageUrl = imageHelper.getPrimaryImageUrl(
             item = baseItem,
@@ -150,15 +124,7 @@ fun setBackground(baseItem: BaseItemDto?) {
         
         if (primaryImageUrl != null) {
             backdropUrls.add(primaryImageUrl)
-        } else {
-            // Fallback to default backdrop if no primary image is available
-            backdropUrls.addAll((baseItem.itemBackdropImages + baseItem.parentBackdropImages)
-                .map { it.getUrl(api) })
         }
-    } else {
-        // For non-Media Folder items, use the normal backdrop logic
-        backdropUrls.addAll((baseItem.itemBackdropImages + baseItem.parentBackdropImages)
-            .map { it.getUrl(api) })
     }
 
     loadBackgrounds(backdropUrls)

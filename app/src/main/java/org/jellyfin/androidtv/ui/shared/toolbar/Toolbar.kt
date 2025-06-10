@@ -71,7 +71,7 @@ fun Toolbar(
 		// Clock positioned further to the left
 		Text(
 			text = currentTime,
-			fontSize = 20.sp,
+			fontSize = 14.sp,
 			color = Color.White,
 			modifier = Modifier
 				.padding(end = 0.dp) // Reduced from 34dp to 24dp (about 30% less than previous)

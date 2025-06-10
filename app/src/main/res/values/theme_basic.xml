@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Basic theme with minimal styling for low-end devices -->
+    <style name="Theme.Basic" parent="@style/Theme.Jellyfin">
+        <item name="android:windowBackground">@android:color/black</item>
+        <item name="android:colorBackground">@android:color/black</item>
+        <item name="android:textColor">@android:color/white</item>
+
+        <!-- Basic widget styles -->
+        <item name="buttonStyle">@style/Widget.Basic.Button</item>
+        <item name="progressBarStyle">@style/Widget.Basic.ProgressBar</item>
+        <item name="editTextStyle">@style/Widget.Basic.EditText</item>
+    </style>
+
+    <!-- Basic Button Style -->
+    <style name="Widget.Basic.Button" parent="@android:style/Widget.Button">
+        <item name="android:background">@drawable/btn_basic_selector</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:focusable">true</item>
+        <item name="android:clickable">true</item>
+    </style>
+
+    <!-- Basic ProgressBar Style -->
+    <style name="Widget.Basic.ProgressBar" parent="@android:style/Widget.ProgressBar.Horizontal">
+        <item name="android:progressDrawable">@drawable/progress_basic</item>
+        <item name="android:minHeight">4dp</item>
+        <item name="android:maxHeight">4dp</item>
+    </style>
+
+    <!-- Basic EditText Style -->
+    <style name="Widget.Basic.EditText" parent="@android:style/Widget.EditText">
+        <item name="android:background">@drawable/edit_text_basic</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textColorHint">#80FFFFFF</item>
+        <!-- Media Folders Buttons -->
+        <item name="mediaFolderButtonBackground">@android:color/transparent</item>
+        <item name="mediaFolderButtonFocusedBackground">#4DFFFFFF</item>
+        <item name="mediaFolderButtonTextColor">@android:color/white</item>
+        <item name="mediaFolderButtonFocusedTextColor">@android:color/black</item>
+    </style>
+</resources>

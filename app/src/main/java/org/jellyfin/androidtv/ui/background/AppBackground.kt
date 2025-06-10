@@ -35,7 +35,8 @@ import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
 import org.jellyfin.androidtv.R
 import org.jellyfin.androidtv.data.service.BackgroundService
-import org.jellyfin.androidtv.ui.composable.modifier.fadingEdges
+import org.jellyfin.androidtv.ui.composable.modifier.getBackdropFadingColor
+import org.jellyfin.androidtv.ui.composable.modifier.themedFadingEdges
 import org.koin.compose.koinInject
 
 @Composable
@@ -98,6 +99,8 @@ fun AppBackground() {
         isImageReady = true
     }
 
+    val localContext = LocalContext.current
+    
     AnimatedContent(
         targetState = currentBackground,
         transitionSpec = {
@@ -106,6 +109,14 @@ fun AppBackground() {
         label = "BackgroundTransition",
     ) { background ->
         if (background != null) {
+            // Get the background filter color from the theme
+            val typedArray = localContext.theme.obtainStyledAttributes(
+                intArrayOf(R.attr.background_filter)
+            )
+            val backgroundColor = Color(typedArray.getColor(0, 0x000000)).copy(alpha = dimmingIntensity)
+            typedArray.recycle()
+            
+            val fadingColor = getBackdropFadingColor()
             Box(Modifier.fillMaxSize()) {
                 if (isImageReady) {
                     // Container for top-right positioned backdrop
@@ -118,20 +129,19 @@ fun AppBackground() {
                         Image(
                             bitmap = background,
                             contentDescription = null,
-                            contentScale = ContentScale.Crop,
-                            alignment = Alignment.TopEnd,  // Align content to top-right
                             modifier = Modifier
                                 .fillMaxSize()
                                 .then(if (blurBackground) Modifier.blur((blurIntensity * 20).dp) else Modifier)
-                                .fadingEdges(
+                                .themedFadingEdges(
                                     start = (backdropFadingIntensity * 200).toInt().dp,  // Fade from left
-                                    bottom = (backdropFadingIntensity * 300).toInt().dp  // Fade from bottom
+                                    bottom = (backdropFadingIntensity * 300).toInt().dp,  // Fade from bottom
+                                    color = fadingColor
                                 ),
+                            contentScale = ContentScale.Crop,
+                            alignment = Alignment.TopEnd,  // Align content to top-right
                             colorFilter = ColorFilter.tint(
-                                colorResource(R.color.background_filter).copy(
-                                    alpha = dimmingIntensity
-                                ),
-                                BlendMode.SrcAtop
+                                color = backgroundColor,
+                                blendMode = BlendMode.SrcAtop
                             )
                         )
                     }

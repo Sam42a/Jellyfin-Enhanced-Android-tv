@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Fire TV specific theme that overrides the banner -->
+    <style name="Theme.Jellyfin.FireTV" parent="Theme.Jellyfin">
+        <item name="android:banner">@drawable/tv_banner_fire_tv</item>
+        <item name="android:logo">@drawable/app_logo</item>
+    </style>
+</resources>

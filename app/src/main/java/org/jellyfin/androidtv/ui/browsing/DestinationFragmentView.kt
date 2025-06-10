@@ -70,8 +70,7 @@ class DestinationFragmentView @JvmOverloads constructor(
 
 	private val history = Stack<HistoryEntry>()
 
-	fun navigate(action: NavigationAction) {
-		if (action !is NavigationAction.NavigateFragment) return
+	fun navigate(action: NavigationAction.NavigateFragment) {
 		val entry = HistoryEntry(action.destination.fragment.java, action.destination.arguments)
 
 		// Create the base transaction so we can mutate everything at once
@@ -153,27 +152,15 @@ class DestinationFragmentView @JvmOverloads constructor(
 
 			// Attach or add next fragment
 			if (fragment.isDetached) attach(fragment)
-			else add(container.id, fragment, FRAGMENT_TAG_CONTENT)
+			else replace(container.id, fragment, FRAGMENT_TAG_CONTENT)
 		}
 
 		if (fragmentManager.isDestroyed) {
-
-
 			Timber.w("FragmentManager is already destroyed")
-
-
 		} else if (fragmentManager.isStateSaved) {
-
-
 			transaction.commitAllowingStateLoss()
-
-
 		} else {
-
-
 			transaction.commit()
-
-
 		}
 	}
 

@@ -3,9 +3,9 @@ package org.jellyfin.androidtv.ui.card;
 import android.app.Activity;
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Rect;
+import android.graphics.Outline;
 import android.graphics.drawable.Drawable;
-import android.text.TextUtils;
+import android.view.ViewOutlineProvider;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,7 +20,6 @@ import androidx.lifecycle.LifecycleOwner;
 
 import org.jellyfin.androidtv.R;
 import org.jellyfin.androidtv.databinding.ViewCardLegacyImageBinding;
-import org.jellyfin.androidtv.preference.UserPreferences;
 import org.jellyfin.androidtv.ui.AsyncImageView;
 import org.jellyfin.androidtv.ui.itemhandling.BaseItemDtoBaseRowItem;
 import org.jellyfin.androidtv.ui.itemhandling.BaseRowItem;
@@ -49,7 +48,24 @@ public class LegacyImageCardView extends BaseCardView implements androidx.lifecy
             setCardType(CARD_TYPE_MAIN_ONLY);
         }
 
+        // Check if we're running on a Fire TV device
+        boolean isFireTv = isFireTvDevice();
+        Timber.d("Device is Fire TV: %s", isFireTv);
+
+        // Ensure proper outline clipping for the main image
         binding.mainImage.setClipToOutline(true);
+        binding.mainImage.setOutlineProvider(new ViewOutlineProvider() {
+            @Override
+            public void getOutline(View view, Outline outline) {
+                float radius = getContext().getResources().getDimension(R.dimen.card_corner_radius);
+                // Fire TV needs the outline to match the parent drawable exactly
+                if (isFireTv) {
+                    outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), radius);
+                } else {
+                    outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), radius);
+                }
+            }
+        });
 
         // "hack" to trigger KeyProcessor to open the menu for this item on long press
         setOnLongClickListener(v -> {
@@ -69,7 +85,7 @@ public class LegacyImageCardView extends BaseCardView implements androidx.lifecy
         });
         setFocusable(true);
         setFocusableInTouchMode(true);
-        
+
         // Set click listener for selection (if needed)
         setOnClickListener(v -> {
             setSelected(!isSelected());
@@ -85,39 +101,51 @@ public class LegacyImageCardView extends BaseCardView implements androidx.lifecy
     }
 
     private boolean isFocusedState = false;
-    
+
     @SuppressLint({"NewApi", "WrongConstant"})
     private void updateCardBorder() {
         // Get the preference using the static method
         android.content.SharedPreferences prefs = androidx.preference.PreferenceManager.getDefaultSharedPreferences(getContext());
         boolean showWhiteBorders = prefs.getBoolean(org.jellyfin.androidtv.preference.UserPreferences.getShowWhiteBordersKey(), false);
-        
-        Timber.d("showWhiteBorders: %s, isFocused: %s, isSelected: %s", 
+
+        Timber.d("showWhiteBorders: %s, isFocused: %s, isSelected: %s",
             showWhiteBorders, isFocused(), isSelected());
-            
+
         boolean shouldShowBorder = showWhiteBorders && (isFocused() || isSelected());
-        
+
         // Skip if state hasn't changed
         if (isFocusedState == shouldShowBorder) return;
         isFocusedState = shouldShowBorder;
-        
+
         if (shouldShowBorder) {
-            // Apply border to the main image view instead of the entire card
-            binding.mainImage.setForeground(ContextCompat.getDrawable(getContext(), R.drawable.card_focused_border));
+            // Apply border to the main image view with proper insets
+            Drawable border = ContextCompat.getDrawable(getContext(), R.drawable.card_focused_border);
+            int padding = (int) getContext().getResources().getDimension(R.dimen.card_border_padding);
+
+            // Special handling for Fire TV devices
+            if (isFireTvDevice()) {
+                // Fire TV needs zero padding to avoid clipping issues
+                binding.mainImage.setForeground(border);
+                binding.mainImage.setPadding(0, 0, 0, 0);
+            } else {
+                binding.mainImage.setForeground(border);
+                binding.mainImage.setPadding(padding, padding, padding, padding);
+            }
         } else {
             binding.mainImage.setForeground(null);
+            binding.mainImage.setPadding(0, 0, 0, 0);
         }
-        
+
         // Invalidate the view to ensure the border is redrawn
         binding.mainImage.invalidate();
     }
-    
+
     @Override
     protected void onFocusChanged(boolean gainFocus, int direction, android.graphics.Rect previouslyFocusedRect) {
         super.onFocusChanged(gainFocus, direction, previouslyFocusedRect);
         updateCardBorder();
     }
-    
+
     @Override
     public void setSelected(boolean selected) {
         super.setSelected(selected);
@@ -170,6 +198,11 @@ public class LegacyImageCardView extends BaseCardView implements androidx.lifecy
         ViewGroup.LayoutParams lp2 = binding.resumeProgress.getLayoutParams();
         lp2.width = lp.width;
         binding.resumeProgress.setLayoutParams(lp2);
+
+        // Ensure the outline provider is updated with the new dimensions
+        if (binding.mainImage.getOutlineProvider() != null) {
+            binding.mainImage.invalidateOutline();
+        }
     }
 
     public void setTitleText(CharSequence text) {
@@ -285,17 +318,29 @@ public class LegacyImageCardView extends BaseCardView implements androidx.lifecy
     }
 
     private void setTextMaxLines() {
-        if (TextUtils.isEmpty(getTitle())) {
-            binding.contentText.setMaxLines(2);
-        } else {
-            binding.contentText.setMaxLines(1);
-        }
-
-        if (TextUtils.isEmpty(getContentText())) {
-            binding.title.setMaxLines(2);
-        } else {
+        if (binding.title != null) {
             binding.title.setMaxLines(1);
         }
+        if (binding.contentText != null) {
+            binding.contentText.setMaxLines(1);
+        }
+    }
+
+    /**
+     * Detects if the current device is a Fire TV device
+     * Fire TV devices have specific model names or brand identifiers
+     */
+    private boolean isFireTvDevice() {
+        String deviceModel = android.os.Build.MODEL.toLowerCase();
+        String deviceManufacturer = android.os.Build.MANUFACTURER.toLowerCase();
+
+        // Check for common Fire TV device identifiers
+        return deviceModel.contains("aftb") ||
+               deviceModel.contains("aftt") ||
+               deviceModel.contains("aftn") ||
+               deviceModel.contains("afts") ||
+               deviceModel.contains("firetv") ||
+               deviceManufacturer.contains("amazon");
     }
 
     public void clearBanner() {
