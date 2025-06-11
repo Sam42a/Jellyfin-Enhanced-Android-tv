@@ -3,6 +3,7 @@
 [![License: GPL v2](https://img.shields.io/badge/License-GPL_v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
 [![GitHub release](https://img.shields.io/github/v/release/Sam42a/DUNE?include_prereleases&style=flat-square)](https://github.com/Sam42a/DUNE/releases)
 [![GitHub stars](https://img.shields.io/github/stars/Sam42a/DUNE?style=social)](https://github.com/Sam42a/DUNE/stargazers)
+[![Support Me](https://img.shields.io/badge/Support_Me-Buy_a_Coffee-orange?style=flat-square)](https://coff.ee/sam42)
 
 <p align="center">
   <img src="https://i.imgur.com/qvsQBdr.png" alt="DUNE Logo" width="300">
