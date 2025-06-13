@@ -45,7 +45,7 @@ class UserPreferences(context: Context) : SharedPreferenceStore(
         /**
          * Image quality preference: low, normal, high
          */
-		var imageQuality = stringPreference("image_quality", "normal")
+		var imageQuality = stringPreference("image_quality", "low")
 		/**
 		 * Select the app theme
 		 */
@@ -155,7 +155,7 @@ class UserPreferences(context: Context) : SharedPreferenceStore(
 		/**
 		 * Use direct play
 		 */
-		var liveTvDirectPlayEnabled = booleanPreference("pref_live_direct", true)
+		var liveTvDirectPlayEnabled = booleanPreference("pref_live_direct", false)
 
 		/**
 		 * Shortcut used for changing the audio track
