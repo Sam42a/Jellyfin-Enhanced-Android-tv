@@ -11,9 +11,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -23,7 +21,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.AbstractComposeView
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -33,6 +30,7 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.jellyfin.androidtv.R
+import org.jellyfin.androidtv.ui.base.Text
 import org.jellyfin.androidtv.ui.playback.segment.MediaSegmentRepository
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
@@ -44,31 +42,29 @@ fun SkipOverlayComposable(
 	Box(
 		contentAlignment = Alignment.BottomEnd,
 		modifier = Modifier
-			.padding(48.dp, 48.dp)
+			.padding(32.dp, 32.dp)
 	) {
 		AnimatedVisibility(visible, enter = fadeIn(), exit = fadeOut()) {
-			Box(
+			Row(
 				modifier = Modifier
-					.clip(RoundedCornerShape(16.dp))
-					.background(colorResource(android.R.color.black).copy(alpha = 0.7f))
-					.padding(horizontal = 16.dp, vertical = 8.dp)
+					.clip(RoundedCornerShape(6.dp))
+					.background(colorResource(R.color.popup_menu_background).copy(alpha = 0.6f))
+					.padding(horizontal = 8.dp, vertical = 6.dp),
+				horizontalArrangement = Arrangement.spacedBy(8.dp),
+				verticalAlignment = Alignment.CenterVertically,
 			) {
-				Row(
-					verticalAlignment = Alignment.CenterVertically,
-					horizontalArrangement = Arrangement.spacedBy(8.dp)
-				) {
-					Text(
-						text = stringResource(R.string.segment_action_skip).uppercase(),
-						color = colorResource(android.R.color.white),
-						fontSize = 16.sp
-					)
-					Image(
-						painter = painterResource(R.drawable.ic_fast_forward),
-						contentDescription = null,
-						colorFilter = ColorFilter.tint(colorResource(android.R.color.white)),
-						modifier = Modifier.size(20.dp)
-					)
-				}
+				Text(
+					text = stringResource(R.string.segment_action_skip).uppercase(),
+					color = colorResource(R.color.button_default_normal_text),
+					fontSize = 18.sp,
+					modifier = Modifier.padding(start = 4.dp, end = 0.dp)
+				)
+
+				Image(
+					painter = painterResource(R.drawable.ic_skip_next),
+					contentDescription = null,
+					modifier = Modifier.padding(end = 2.dp)
+				)
 			}
 		}
 	}

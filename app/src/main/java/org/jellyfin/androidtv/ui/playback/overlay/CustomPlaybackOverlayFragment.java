@@ -135,34 +135,30 @@ public class CustomPlaybackOverlayFragment extends Fragment implements PlaybackG
     }
 
     public void showControls() {
-        if (!isControlsVisible && getView() != null) {
+        if (!isControlsVisible) {
             isControlsVisible = true;
-            View view = getView();
-            view.animate().cancel();
-            view.setVisibility(View.VISIBLE);
-            view.setAlpha(1f);
+            getView().setVisibility(View.VISIBLE);
+            getView().animate()
+                .alpha(1f)
+                .setDuration(300)
+                .start();
         }
     }
 
     public void hideControls() {
-        if (isControlsVisible && getView() != null) {
+        if (isControlsVisible) {
             isControlsVisible = false;
-            View view = getView();
-            view.animate().cancel();
-            view.setVisibility(View.GONE);
-            view.setAlpha(0f);
+            getView().animate()
+                .alpha(0f)
+                .setDuration(300)
+                .withEndAction(() -> getView().setVisibility(View.GONE))
+                .start();
         }
     }
 
     public void hideControlsDelayed() {
-        View view = getView();
-        if (view != null) {
-            view.removeCallbacks(hideControlsRunnable);
-            view.postDelayed(hideControlsRunnable, 3000);
-        }
+        getView().postDelayed(this::hideControls, 3000);
     }
-    
-    private final Runnable hideControlsRunnable = this::hideControls;
 
     public void setFadingEnabled(boolean enabled) {
         isFadingEnabled = enabled;

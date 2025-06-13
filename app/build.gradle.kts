@@ -83,22 +83,22 @@ android {
 			dimension = "variant"
 			// Uses default applicationId
 		}
-		
+
 		create("enhanced") {
 			dimension = "variant"
 			applicationId = "Dune.enhanced.tv"
-			
+
 			// Set specific version name for enhanced variant
-			versionName = "0.4"
-			
+			versionName = "0.0.4"
+
 			// Set app name for the enhanced version
 			resValue("string", "app_name_release", "DUNE")
-			
+
 			// Add required string resources that are referenced in XML files
 			resValue("string", "app_id", applicationId!!)
 			resValue("string", "app_search_suggest_authority", "${applicationId}.content")
 			resValue("string", "app_search_suggest_intent_data", "content://${applicationId}.content/intent")
-			
+
 			// Set custom APK filename
 			setProperty("archivesBaseName", "Dune.androidtv-0.4")
 		}
@@ -134,8 +134,8 @@ tasks.register("buildEnhanced") {
 	doLast {
 		println("\nBuilding Enhanced version with:")
 		println("Package ID: Dune.enhanced.tv")
-		println("Version: 0.4")
-		println("App Name: Jellyfine")
+		println("Version: 0.0.4")
+		println("App Name: DUNE")
 		println("Filename: Dune.androidtv-0.4.apk")
 		println("The APK will be available in: app/build/outputs/apk/enhanced/release/")
 	}
@@ -201,6 +201,7 @@ dependencies {
 	implementation(libs.bundles.coil)
 	implementation("com.github.bumptech.glide:glide:4.16.0")
 	implementation("androidx.viewpager2:viewpager2:1.0.0")
+	// GIF support
 	implementation("pl.droidsonroids.gif:android-gif-drawable:1.2.28")
 
 	// Crash Reporting

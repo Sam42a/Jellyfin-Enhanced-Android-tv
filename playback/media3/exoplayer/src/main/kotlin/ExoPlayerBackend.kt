@@ -16,6 +16,8 @@ import androidx.media3.common.text.CueGroup
 import androidx.media3.common.C.TRACK_TYPE_TEXT
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DefaultDataSource
+import androidx.media3.decoder.DecoderInputBuffer
+import androidx.media3.exoplayer.mediacodec.MediaCodecSelector
 import androidx.media3.exoplayer.DefaultRenderersFactory
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
@@ -59,6 +61,7 @@ class ExoPlayerBackend(
 		ExoPlayer.Builder(context)
 			.setRenderersFactory(DefaultRenderersFactory(context).apply {
 				setEnableDecoderFallback(true)
+				setMediaCodecSelector(MediaCodecSelector.DEFAULT)
 				setExtensionRendererMode(
 					when (exoPlayerOptions.preferFfmpeg) {
 						true -> DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER

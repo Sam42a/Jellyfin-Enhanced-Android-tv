@@ -156,10 +156,39 @@ public class EnhancedBrowseFragment extends Fragment implements RowLoader, View.
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        // Clear the backdrop when the fragment is paused
+        clearBackdrop();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        // Clear the backdrop when the fragment is stopped
+        clearBackdrop();
+    }
+    
+    private void clearBackdrop() {
+        try {
+            if (backgroundService.getValue() != null) {
+                backgroundService.getValue().clearBackgrounds();
+            }
+        } catch (Exception e) {
+            Timber.e(e, "Error clearing backdrop");
+        }
+    }
+
+    @Override
     public void onDestroyView() {
         super.onDestroyView();
         mClickedListener.removeListeners();
         mSelectedListener.removeListeners();
+        
+        // Clear the backdrop when the view is destroyed
+        if (backgroundService.getValue() != null) {
+            backgroundService.getValue().clearBackgrounds();
+        }
     }
 
     protected void setupQueries(RowLoader rowLoader) {
@@ -499,7 +528,7 @@ public class EnhancedBrowseFragment extends Fragment implements RowLoader, View.
                     if (mSummary != null) mSummary.setText("");
                     mCurrentItem = null;
                     mCurrentRow = null;
-                    // Fill in default background
+                    // Clear the backdrop when no item is selected
                     if (backgroundService.getValue() != null) {
                         backgroundService.getValue().clearBackgrounds();
                     }
@@ -507,16 +536,16 @@ public class EnhancedBrowseFragment extends Fragment implements RowLoader, View.
                 }
 
 
-                mCurrentItem = rowItem;
+                mCurrentItem = (BaseRowItem) item;
                 mCurrentRow = (ListRow) row;
                 if (mInfoRow != null) mInfoRow.removeAllViews();
 
                 if (mTitle != null) {
-                    mTitle.setText(rowItem.getName(requireContext()));
+                    mTitle.setText(mCurrentItem.getName(requireContext()));
                 }
 
                 if (mSummary != null) {
-                    String summary = rowItem.getSummary(requireContext());
+                    String summary = mCurrentItem.getSummary(requireContext());
                     if (summary != null) {
                         mSummary.setText(markdownRenderer.getValue().toMarkdownSpanned(summary));
                     } else {
@@ -525,18 +554,19 @@ public class EnhancedBrowseFragment extends Fragment implements RowLoader, View.
                 }
 
                 if (mInfoRow != null && getContext() != null) {
-                    InfoLayoutHelper.addInfoRow(requireContext(), rowItem.getBaseItem(), mInfoRow, true, false);
+                    InfoLayoutHelper.addInfoRow(requireContext(), mCurrentItem.getBaseItem(), mInfoRow, true, false);
                 }
 
                 if (row != null) {
                     ItemRowAdapter adapter = (ItemRowAdapter) ((ListRow) row).getAdapter();
                     if (adapter != null) {
-                        adapter.loadMoreItemsIfNeeded(adapter.indexOf(rowItem));
+                        adapter.loadMoreItemsIfNeeded(adapter.indexOf(mCurrentItem));
                     }
                 }
 
+                // Set the backdrop for the selected item
                 if (backgroundService.getValue() != null) {
-                    backgroundService.getValue().setBackground(rowItem.getBaseItem());
+                    backgroundService.getValue().setBackground(mCurrentItem.getBaseItem());
                 }
             } catch (Exception e) {
                 // Catch any potential exceptions to prevent crashes

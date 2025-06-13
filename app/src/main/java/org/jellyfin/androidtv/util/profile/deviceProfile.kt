@@ -73,12 +73,12 @@ fun createDeviceProfile(
 	val mediaTest = MediaCodecCapabilitiesTest()
 	val supportsHevc = mediaTest.supportsHevc()
 	val supportsHevcMain10 = mediaTest.supportsHevcMain10()
-	val hevcMainLevel = mediaTest.getHevcMainLevel().toIntOrNull() ?: 0
-	val hevcMain10Level = mediaTest.getHevcMain10Level().toIntOrNull() ?: 0
+	val hevcMainLevel = mediaTest.getHevcMainLevel()
+	val hevcMain10Level = mediaTest.getHevcMain10Level()
 	val supportsAVC = mediaTest.supportsAVC()
 	val supportsAVCHigh10 = mediaTest.supportsAVCHigh10()
-	val avcMainLevel = mediaTest.getAVCMainLevel().toIntOrNull() ?: 0
-	val avcHigh10Level = mediaTest.getAVCHigh10Level().toIntOrNull() ?: 0
+	val avcMainLevel = mediaTest.getAVCMainLevel()
+	val avcHigh10Level = mediaTest.getAVCHigh10Level()
 	val supportsAV1 = mediaTest.supportsAV1()
 	val supportsAV1Main10 = mediaTest.supportsAV1Main10()
 	val maxResolutionAVC = mediaTest.getMaxResolution(MimeTypes.VIDEO_H264)

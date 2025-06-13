@@ -58,9 +58,16 @@ class HomeFragment : Fragment() {
         return binding.root
     }
 
+    private val backgroundService: org.jellyfin.androidtv.data.service.BackgroundService by inject()
+
     override fun onResume() {
         super.onResume()
-        // Reset any necessary state here
+        // Clear backdrop when navigating to home
+        try {
+            backgroundService.clearBackgrounds()
+        } catch (e: Exception) {
+            // Ignore any errors when clearing backdrop
+        }
     }
 
     override fun onDestroyView() {

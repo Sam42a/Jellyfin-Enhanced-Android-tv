@@ -178,18 +178,25 @@ class MainActivity : FragmentActivity() {
 
 	override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			// Check if we're on the home screen by looking at the current fragment
-			val currentFragment = supportFragmentManager.findFragmentById(R.id.content_view)
-			val isOnHomeScreen = currentFragment is HomeFragment
+			// Check if we're on the home screen by checking back stack and current fragment
+			val currentFragment = supportFragmentManager.fragments.lastOrNull()
+			val isOnHomeScreen = currentFragment is HomeFragment || 
+					(supportFragmentManager.backStackEntryCount == 0 && 
+					 supportFragmentManager.primaryNavigationFragment is HomeFragment)
+
+			Timber.d("Back button pressed. isOnHomeScreen: $isOnHomeScreen, backStackCount: ${supportFragmentManager.backStackEntryCount}")
 
 			if (supportFragmentManager.backStackEntryCount > 0) {
 				// Let the fragment handle the back press if there are fragments in the back stack
+				Timber.d("Back stack not empty, letting fragment handle back press")
 				return onKeyEvent(keyCode, event) || super.onKeyDown(keyCode, event)
 			} else if (isOnHomeScreen) {
 				// Only show exit confirmation when on the home screen
+				Timber.d("On home screen, showing exit confirmation")
 				showExitConfirmation()
 				return true
 			}
+			Timber.d("Not on home screen and no fragments in back stack, letting system handle back press")
 			// If not on home screen and no fragments in back stack, let the system handle it
 			return super.onKeyDown(keyCode, event)
 		}
@@ -248,47 +255,58 @@ class MainActivity : FragmentActivity() {
 			setPositiveButton(R.string.yes) { _, _ -> finishAffinity() }
 			setNegativeButton(R.string.no) { dialog, _ -> dialog.dismiss() }
 			setCancelable(true)
-		}.create()
+		}
 
-		dialog.window?.let { window ->
+		val alertDialog = dialog.create()
+		val displayMetrics = resources.displayMetrics
+		val screenWidth = minOf(displayMetrics.widthPixels, displayMetrics.heightPixels)
+
+		alertDialog.window?.let { window ->
 			// Set the background drawable
 			val drawable = androidx.core.content.ContextCompat.getDrawable(this, R.drawable.exit_dialog_background)
 			window.setBackgroundDrawable(drawable)
 			
-			// Set dialog position and size
-			val layoutParams = window.attributes
-			val displayMetrics = resources.displayMetrics
-			val screenWidth = minOf(displayMetrics.widthPixels, displayMetrics.heightPixels)
-			layoutParams.width = (screenWidth * 0.6).toInt()
-			layoutParams.gravity = android.view.Gravity.CENTER
-			window.attributes = layoutParams
-			
-			// Ensure the dialog is focusable
-			window.clearFlags(android.view.WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE)
+			// Set dialog width to 35% of screen width for a more compact look
+			val params = android.view.WindowManager.LayoutParams().apply {
+				copyFrom(window.attributes)
+				width = (screenWidth * 0.35).toInt()
+				height = android.view.WindowManager.LayoutParams.WRAP_CONTENT
+				gravity = android.view.Gravity.CENTER
+			}
+			window.attributes = params
 		}
 
-		dialog.show()
+		alertDialog.show()
 
-		// Center the message text and set text color
-		dialog.findViewById<android.widget.TextView>(android.R.id.message)?.apply {
+		// Style the message with less vertical padding
+		val messageView = alertDialog.findViewById<android.widget.TextView>(android.R.id.message)
+		messageView?.apply {
 			gravity = android.view.Gravity.CENTER
 			setTextColor(android.graphics.Color.WHITE)
-			// Adjust text size and padding
-			textSize = 15f
-			setPadding(8, 8, 8, 8)
+			textSize = 14f  // Slightly smaller text
+			setPadding(24, 16, 24, 12)  // Reduced padding
 		}
 
 		try {
-			// Set button text colors and focus handling
-			val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
-			val negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+			val positiveButton = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)
+			val negativeButton = alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE)
 			
-			positiveButton?.setTextColor(
-				androidx.core.content.ContextCompat.getColor(this, R.color.theme_accent)
-			)
-			negativeButton?.setTextColor(
-				android.graphics.Color.parseColor("#CCCCCC")
-			)
+			// Set both buttons to white
+			val whiteColor = android.graphics.Color.WHITE
+			positiveButton?.setTextColor(whiteColor)
+			negativeButton?.setTextColor(whiteColor)
+
+			// Set compact padding for buttons
+			val buttonPadding = (12 * resources.displayMetrics.density).toInt()
+			val buttonPaddingVertical = (6 * resources.displayMetrics.density).toInt()
+			positiveButton?.setPadding(buttonPadding, buttonPaddingVertical, buttonPadding, buttonPaddingVertical)
+			negativeButton?.setPadding(buttonPadding, buttonPaddingVertical, buttonPadding, buttonPaddingVertical)
+			
+			// Center the buttons in their container
+			(negativeButton?.parent as? android.widget.LinearLayout)?.apply {
+				gravity = android.view.Gravity.CENTER_HORIZONTAL
+				orientation = android.widget.LinearLayout.HORIZONTAL
+			}
 			
 			// Ensure buttons are focusable
 			positiveButton?.isFocusable = true
@@ -297,7 +315,7 @@ class MainActivity : FragmentActivity() {
 			// Request focus on the negative button by default
 			negativeButton?.requestFocus()
 		} catch (e: Exception) {
-			// Ignore any errors setting button colors
+			Timber.e(e, "Error styling exit dialog")
 		}
 	}
 }

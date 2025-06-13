@@ -12,18 +12,16 @@
 
         <FrameLayout
             android:id="@+id/player_surface_frame"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:foregroundGravity="clip_horizontal|clip_vertical"
-            android:background="@android:color/black"
             tools:ignore="true">
 
             <SurfaceView
                 android:id="@+id/subtitles_surface"
                 android:layout_width="1dp"
-                android:layout_height="1dp"
-                android:background="@android:color/black" />
+                android:layout_height="1dp" />
 
         </FrameLayout>
 
@@ -31,16 +29,7 @@
             android:id="@+id/exoPlayerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@android:color/black"
-            app:surface_type="texture_view"
-            app:resize_mode="fit"
-            app:use_controller="false"
-            app:controller_layout_id="@layout/playback_controls"
-            app:show_buffering="when_playing"
-            app:show_shuffle_button="false"
-            app:show_timeout="0"
-            app:show_vr_button="false"
-            app:shutter_background_color="@android:color/black" />
+            app:use_controller="false" />
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/leanback_fragment"

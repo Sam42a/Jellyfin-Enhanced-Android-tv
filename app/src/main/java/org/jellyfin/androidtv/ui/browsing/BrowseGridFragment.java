@@ -330,22 +330,30 @@ public class BrowseGridFragment extends Fragment implements View.OnKeyListener {
     }
 
     public void setStatusText(String folderName) {
-        String text = getString(R.string.lbl_showing) + " ";
-        FilterOptions filters = mAdapter.getFilters();
-        if (filters == null || (!filters.isFavoriteOnly() && !filters.isUnwatchedOnly())) {
-            text += getString(R.string.lbl_all_items);
-        } else {
-            text += (filters.isUnwatchedOnly() ? getString(R.string.lbl_unwatched) : "") + " " +
-                    (filters.isFavoriteOnly() ? getString(R.string.lbl_favorites) : "");
+        if (folderName == null || binding == null || mAdapter == null) return;
+
+        try {
+            String text = getString(R.string.lbl_showing) + " ";
+            FilterOptions filters = mAdapter.getFilters();
+            if (filters == null || (!filters.isFavoriteOnly() && !filters.isUnwatchedOnly())) {
+                text += getString(R.string.lbl_all_items);
+            } else {
+                text += (filters.isUnwatchedOnly() ? getString(R.string.lbl_unwatched) : "") + " " +
+                        (filters.isFavoriteOnly() ? getString(R.string.lbl_favorites) : "");
+            }
+
+            if (mAdapter.getStartLetter() != null) {
+                text += " " + getString(R.string.lbl_starting_with) + " " + mAdapter.getStartLetter();
+            }
+
+            text += " " + getString(R.string.lbl_from) + " '" + folderName + "' " + getString(R.string.lbl_sorted_by) + " " + getSortOption(mAdapter.getSortBy()).name;
+
+            if (binding.statusText != null) {
+                binding.statusText.setText(text);
+            }
+        } catch (Exception e) {
+            Timber.e(e, "Error setting status text");
         }
-
-        if (mAdapter.getStartLetter() != null) {
-            text += " " + getString(R.string.lbl_starting_with) + " " + mAdapter.getStartLetter();
-        }
-
-        text += " " + getString(R.string.lbl_from) + " '" + folderName + "' " + getString(R.string.lbl_sorted_by) + " " + getSortOption(mAdapter.getSortBy()).name;
-
-        binding.statusText.setText(text);
     }
 
     final private OnItemViewSelectedListener mRowSelectedListener =

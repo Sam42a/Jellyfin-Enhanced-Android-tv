@@ -22,9 +22,12 @@ import org.jellyfin.androidtv.ui.itemhandling.BaseRowItem
 import org.jellyfin.androidtv.constant.ImageType
 import org.jellyfin.androidtv.util.ImageHelper
 import org.jellyfin.androidtv.util.ImagePreloader
+import org.jellyfin.androidtv.data.service.BackgroundService
+import org.jellyfin.androidtv.util.Utils
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
+import timber.log.Timber
 
 import android.app.Activity
 import android.content.Intent
@@ -48,6 +51,7 @@ class SearchFragment : Fragment() {
 	private val searchFragmentDelegate: SearchFragmentDelegate by inject {
 		parametersOf(requireContext())
 	}
+	private val backgroundService: BackgroundService by inject()
 
 	override fun onCreateView(
 		inflater: LayoutInflater,
@@ -76,6 +80,13 @@ class SearchFragment : Fragment() {
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
+
+		// Clear any existing backdrops when search is opened
+		try {
+			backgroundService.clearBackgrounds()
+		} catch (e: Exception) {
+			Timber.e(e, "Error clearing backdrops in SearchFragment")
+		}
 
 		// Focus border for icons
 		val focusBorder = requireContext().getDrawable(R.drawable.icon_focus_border)
